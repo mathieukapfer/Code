@@ -7,7 +7,7 @@ nb_period = 4
 % original wave
 x = [-nb_period/2:res:nb_period/2-res];
 y = the_function(x);
-%y = carre(x);
+%y = rect(x);
 
 % resample wave
 y_resample = reshape(resize(y,2,size(y,2)),1,2*size(y,2));
@@ -39,11 +39,11 @@ function y = the_function(x)
     y = sin(2*pi*x);
 end
 
-function y = carre(x)
+function y = rect(x)
     base = 5
     x_size=size(x,2)
     y = zeros(x_size, 1);
-    for i = [x_size/2- base: x_size/2+base]
+    for i = [round(x_size/2) - base: round(x_size/2) + base]
         y(i) = 1;
     end
 end

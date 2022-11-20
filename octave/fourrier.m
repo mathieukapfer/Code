@@ -1,4 +1,4 @@
-N = 512 ;
+N = 256 ;
 M = zeros(N,N) ;
 
 for k = 1 :N,
@@ -12,10 +12,18 @@ f = 32 ;
 u = cos(f*t) ;
 
 u = u';
-subplot(2,1,1) ;
-title("sinusoide") ;
+subplot(3,1,1) ;
 plot(u) ;
+title("sinusoide") ;
+
+% compute fft
 uchap = M*u ;
-subplot(2,1,2) ;
-title("transformee de Fourier") ;
+
+subplot(3,1,2) ;
 plot(abs(uchap)) ;
+title("fft (matrice)") ;
+
+% use octave fft func
+subplot(3,1,3) ;
+plot(abs(fft(u))) ;
+title("ftt (octave)") ;

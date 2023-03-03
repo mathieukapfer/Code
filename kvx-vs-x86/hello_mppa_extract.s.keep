@@ -1,0 +1,934 @@
+	.text
+	.file	"hello_mppa_extract.c"
+	.globl	papi_init
+	.p2align	6
+	.type	papi_init,@function
+papi_init:
+	make $r0 = 0x60c183007efdfbf
+	;;
+	#APP
+	wfxl $pmc, $r0
+	;;
+	#NO_APP
+	make $r0 = 0x62c58b107efdfbf
+	;;
+	#APP
+	wfxl $pmc, $r0
+	;;
+	#NO_APP
+	ret
+	;;
+.Lfunc_end0:
+	.size	papi_init, .Lfunc_end0-papi_init
+
+	.globl	papi_clean
+	.p2align	6
+	.type	papi_clean,@function
+papi_clean:
+	ret
+	;;
+.Lfunc_end1:
+	.size	papi_clean, .Lfunc_end1-papi_clean
+
+	.globl	papi_display
+	.p2align	6
+	.type	papi_display,@function
+papi_display:
+	addd $r12 = $r12, -64
+	get $r16 = $ra
+	;;
+	sd 56[$r12] = $r16
+	;;
+	so 24[$r12] = $r20r21r22r23
+	;;
+	sq 8[$r12] = $r18r19
+	andw $r1 = $r0, 1
+	copyd $r18 = $r1
+	;;
+	get $r0 = $pm0
+	;;
+	cb.weqz $r1 ? .LBB2_2
+	;;
+	floatw.rn $r19 = $r18, 0
+	make $r22 = papi_display.previous.0
+	;;
+	ld $r1 = 0[$r22]
+	get $r21 = $pm0
+	;;
+	sbfd $r20 = $r1, $r0
+	;;
+	copyd $r0 = $r20
+	call __floatdisf
+	;;
+	copyd $r1 = $r19
+	call __divsf3
+	;;
+	make $r0 = .L.str.4
+	make $r1 = .L.str
+	copyd $r2 = $r21
+	fwidenlwd $r4 = $r0
+	;;
+	copyd $r3 = $r20
+	copyd $r5 = $r18
+	call printf
+	;;
+	get $r0 = $pm0
+	make $r23 = papi_display.previous.1
+	;;
+	sd 0[$r22] = $r0
+	get $r0 = $pm1
+	;;
+	ld $r1 = 0[$r23]
+	get $r21 = $pm1
+	;;
+	sbfd $r20 = $r1, $r0
+	;;
+	copyd $r0 = $r20
+	call __floatdisf
+	;;
+	copyd $r1 = $r19
+	call __divsf3
+	;;
+	make $r0 = .L.str.4
+	make $r1 = .L.str.1
+	copyd $r2 = $r21
+	fwidenlwd $r4 = $r0
+	;;
+	copyd $r3 = $r20
+	copyd $r5 = $r18
+	call printf
+	;;
+	get $r0 = $pm1
+	make $r22 = papi_display.previous.2
+	;;
+	sd 0[$r23] = $r0
+	get $r0 = $pm2
+	;;
+	ld $r1 = 0[$r22]
+	get $r21 = $pm2
+	;;
+	sbfd $r20 = $r1, $r0
+	;;
+	copyd $r0 = $r20
+	call __floatdisf
+	;;
+	copyd $r1 = $r19
+	call __divsf3
+	;;
+	make $r0 = .L.str.4
+	make $r1 = .L.str.2
+	copyd $r2 = $r21
+	fwidenlwd $r4 = $r0
+	;;
+	copyd $r3 = $r20
+	copyd $r5 = $r18
+	call printf
+	;;
+	get $r0 = $pm2
+	;;
+	sd 0[$r22] = $r0
+	make $r0 = papi_display.previous.3
+	get $r1 = $pm3
+	;;
+	ld $r0 = 0[$r0]
+	get $r21 = $pm3
+	;;
+	sbfd $r20 = $r0, $r1
+	;;
+	copyd $r0 = $r20
+	call __floatdisf
+	;;
+	copyd $r1 = $r19
+	call __divsf3
+	;;
+	make $r0 = .L.str.4
+	make $r1 = .L.str.3
+	copyd $r2 = $r21
+	fwidenlwd $r4 = $r0
+	;;
+	copyd $r3 = $r20
+	copyd $r5 = $r18
+	call printf
+	;;
+	goto .LBB2_3
+	;;
+.LBB2_2:
+	get $r0 = $pm0
+	make $r1 = papi_display.previous.0
+	;;
+	sd 0[$r1] = $r0
+	get $r0 = $pm1
+	make $r1 = papi_display.previous.1
+	;;
+	get $r0 = $pm1
+	;;
+	sd 0[$r1] = $r0
+	get $r0 = $pm2
+	make $r1 = papi_display.previous.2
+	;;
+	get $r0 = $pm2
+	;;
+	sd 0[$r1] = $r0
+	get $r0 = $pm3
+	;;
+.LBB2_3:
+	get $r0 = $pm3
+	make $r1 = papi_display.previous.3
+	;;
+	sd 0[$r1] = $r0
+	;;
+	lq $r18r19 = 8[$r12]
+	;;
+	lo $r20r21r22r23 = 24[$r12]
+	;;
+	ld $r16 = 56[$r12]
+	;;
+	set $ra = $r16
+	addd $r12 = $r12, 64
+	;;
+	ret
+	;;
+.Lfunc_end2:
+	.size	papi_display, .Lfunc_end2-papi_display
+
+	.globl	main
+	.p2align	6
+	.type	main,@function
+main:
+	addd $r12 = $r12, -512
+	get $r16 = $ra
+	;;
+	sd 504[$r12] = $r16
+	;;
+	sd 496[$r12] = $r30
+	;;
+	sq 480[$r12] = $r28r29
+	;;
+	so 448[$r12] = $r24r25r26r27
+	;;
+	so 416[$r12] = $r20r21r22r23
+	;;
+	sq 400[$r12] = $r18r19
+	make $r0 = a_
+	make $r1 = 0
+	make $r4 = 130
+	;;
+	make $r2 = b_
+	make $r3 = r_
+	;;
+	loopdo $r4, .__LOOPDO_1_END_
+	;;
+.LBB3_1:
+	lo.xs $r8r9r10r11 = $r1[$r2]
+	addw $r15 = $r1, 1
+	sllw $r16 = $r1, 1
+	make $r37 = 1
+	;;
+	lo.xs $r32r33r34r35 = $r1[$r3]
+	maddw $r37 = $r1, 3
+	orw $r38 = $r16, 1
+	;;
+	lo.xs $r4r5r6r7 = $r1[$r0]
+	clrf $r8 = $r8, 15, 0
+	mulw $r17 = $r1, 3
+	zxhd $r36 = $r32
+	;;
+	clrf $r4 = $r4, 15, 0
+	ord $r8 = $r8, 1
+	srlw $r39 = $r32, 16
+	addw $r40 = $r36, 1
+	;;
+	insf $r4 = $r1, 31, 16
+	insf $r8 = $r15, 31, 16
+	addw $r15 = $r39, 1
+	copyd $r36 = $r32
+	;;
+	insf $r8 = $r38, 47, 32
+	insf $r36 = $r40, 15, 0
+	;;
+	insf $r4 = $r16, 47, 32
+	sllw $r16 = $r1, 2
+	srld $r32 = $r32, 48
+	extfz $r38 = $r32, 47, 32
+	;;
+	insf $r8 = $r37, 63, 48
+	mulw $r15 = $r1, 5
+	insf $r36 = $r15, 31, 16
+	addw $r37 = $r38, 1
+	;;
+	insf $r4 = $r17, 63, 48
+	insf $r5 = $r16, 15, 0
+	orw $r17 = $r16, 1
+	;;
+	make $r16 = 1
+	addw $r32 = $r32, 1
+	insf $r36 = $r37, 47, 32
+	zxhd $r37 = $r33
+	;;
+	insf $r5 = $r15, 31, 16
+	insf $r9 = $r17, 15, 0
+	maddw $r16 = $r1, 5
+	addw $r17 = $r37, 1
+	;;
+	srlw $r15 = $r33, 16
+	mulw $r32 = $r1, 6
+	insf $r36 = $r32, 63, 48
+	copyd $r37 = $r33
+	;;
+	addw $r15 = $r15, 1
+	insf $r37 = $r17, 15, 0
+	;;
+	insf $r9 = $r16, 31, 16
+	make $r15 = 1
+	mulw $r16 = $r1, 7
+	insf $r37 = $r15, 31, 16
+	;;
+	insf $r5 = $r32, 47, 32
+	maddw $r15 = $r1, 7
+	orw $r17 = $r32, 1
+	extfz $r32 = $r33, 47, 32
+	;;
+	insf $r5 = $r16, 63, 48
+	insf $r9 = $r17, 47, 32
+	addw $r17 = $r32, 1
+	srld $r32 = $r33, 48
+	;;
+	insf $r9 = $r15, 63, 48
+	sllw $r15 = $r1, 3
+	addw $r16 = $r32, 1
+	insf $r37 = $r17, 47, 32
+	;;
+	insf $r6 = $r15, 15, 0
+	orw $r15 = $r15, 1
+	mulw $r17 = $r1, 9
+	insf $r37 = $r16, 63, 48
+	;;
+	insf $r10 = $r15, 15, 0
+	zxhd $r16 = $r34
+	make $r32 = 1
+	copyd $r38 = $r34
+	;;
+	insf $r6 = $r17, 31, 16
+	srlw $r15 = $r34, 16
+	addw $r16 = $r16, 1
+	maddw $r32 = $r1, 9
+	;;
+	addw $r15 = $r15, 1
+	mulw $r16 = $r1, 10
+	insf $r38 = $r16, 15, 0
+	copyd $r39 = $r35
+	;;
+	extfz $r15 = $r34, 47, 32
+	mulw $r17 = $r1, 11
+	srld $r33 = $r35, 48
+	insf $r38 = $r15, 31, 16
+	;;
+	insf $r6 = $r16, 47, 32
+	insf $r10 = $r32, 31, 16
+	addw $r15 = $r15, 1
+	orw $r16 = $r16, 1
+	;;
+	insf $r10 = $r16, 47, 32
+	srld $r15 = $r34, 48
+	mulw $r16 = $r1, 12
+	insf $r38 = $r15, 47, 32
+	;;
+	insf $r6 = $r17, 63, 48
+	addw $r15 = $r15, 1
+	make $r17 = 1
+	make $r32 = 1
+	;;
+	insf $r7 = $r16, 15, 0
+	orw $r15 = $r16, 1
+	maddw $r32 = $r1, 11
+	insf $r38 = $r15, 63, 48
+	;;
+	insf $r11 = $r15, 15, 0
+	zxhd $r15 = $r35
+	mulw $r16 = $r1, 13
+	;;
+	insf $r10 = $r32, 63, 48
+	addw $r15 = $r15, 1
+	maddw $r17 = $r1, 13
+	srlw $r32 = $r35, 16
+	;;
+	insf $r7 = $r16, 31, 16
+	addw $r15 = $r32, 1
+	mulw $r16 = $r1, 14
+	insf $r39 = $r15, 15, 0
+	;;
+	insf $r11 = $r17, 31, 16
+	mulw $r15 = $r1, 15
+	make $r17 = 1
+	insf $r39 = $r15, 31, 16
+	;;
+	insf $r7 = $r16, 47, 32
+	orw $r16 = $r16, 1
+	maddw $r17 = $r1, 15
+	extfz $r32 = $r35, 47, 32
+	;;
+	insf $r7 = $r15, 63, 48
+	insf $r11 = $r16, 47, 32
+	addw $r15 = $r33, 1
+	addw $r16 = $r32, 1
+	;;
+	so.xs $r1[$r0] = $r4r5r6r7
+	insf $r11 = $r17, 63, 48
+	insf $r39 = $r16, 47, 32
+	;;
+	so.xs $r1[$r2] = $r8r9r10r11
+	insf $r39 = $r15, 63, 48
+	;;
+	so.xs $r1[$r3] = $r36r37r38r39
+	addd $r1 = $r1, 1
+	;;
+.__LOOPDO_1_END_:
+	make $r20 = 0x60c183007efdfbf
+	make $r21 = 0x646810007efdfbf
+	make $r27 = 0
+	make $r28 = 26
+	;;
+	make $r22 = papi_display.previous.0
+	make $r23 = papi_display.previous.1
+	;;
+	#APP
+	wfxl $pmc, $r20
+	;;
+	#NO_APP
+	make $r24 = papi_display.previous.2
+	make $r25 = papi_display.previous.3
+	;;
+	make $r26 = r_
+	make $r29 = a_
+	;;
+	make $r0 = 0x62c58b107efdfbf
+	make $r30 = b_
+	;;
+	#APP
+	wfxl $pmc, $r0
+	;;
+	#NO_APP
+	goto .LBB3_3
+	;;
+.LBB3_19:
+	addw $r27 = $r27, 1
+	;;
+	compw.eq $r0 = $r27, 3
+	;;
+	cb.odd $r0 ? .LBB3_20
+	;;
+.LBB3_3:
+	make $r0 = a_
+	make $r1 = b_
+	;;
+	#APP
+	wfxl $pmc, $r21
+	;;
+	#NO_APP
+	make $r2 = r_
+	;;
+	loopdo $r28, .__LOOPDO_0_END_
+	;;
+.LBB3_21:
+	lo $r4r5r6r7 = 0[$r0]
+	;;
+	lo $r8r9r10r11 = 0[$r1]
+	;;
+	lo $r32r33r34r35 = 32[$r0]
+	;;
+	lo $r36r37r38r39 = 32[$r1]
+	;;
+	lo $r40r41r42r43 = 64[$r0]
+	addhq $r4 = $r8, $r4
+	addhq $r5 = $r9, $r5
+	addhq $r6 = $r10, $r6
+	;;
+	lo $r44r45r46r47 = 64[$r1]
+	addhq $r7 = $r11, $r7
+	;;
+	lo $r48r49r50r51 = 96[$r0]
+	addhq $r8 = $r36, $r32
+	addhq $r9 = $r37, $r33
+	addhq $r10 = $r38, $r34
+	;;
+	lo $r52r53r54r55 = 96[$r1]
+	addhq $r11 = $r39, $r35
+	;;
+	lo $r56r57r58r59 = 128[$r0]
+	addhq $r32 = $r44, $r40
+	addhq $r33 = $r45, $r41
+	addhq $r34 = $r46, $r42
+	;;
+	lo $r60r61r62r63 = 128[$r1]
+	addd $r0 = $r0, 160
+	addd $r1 = $r1, 160
+	addhq $r35 = $r47, $r43
+	;;
+	so 0[$r2] = $r4r5r6r7
+	addhq $r36 = $r52, $r48
+	addhq $r37 = $r53, $r49
+	addhq $r38 = $r54, $r50
+	;;
+	so 32[$r2] = $r8r9r10r11
+	addhq $r4 = $r60, $r56
+	addhq $r5 = $r61, $r57
+	addhq $r39 = $r55, $r51
+	;;
+	so 64[$r2] = $r32r33r34r35
+	addhq $r6 = $r62, $r58
+	addhq $r7 = $r63, $r59
+	;;
+	so 96[$r2] = $r36r37r38r39
+	;;
+	so 128[$r2] = $r4r5r6r7
+	addd $r2 = $r2, 160
+	;;
+.__LOOPDO_0_END_:
+	compw.ne $r1 = $r27, 2
+	;;
+	#APP
+	wfxl $pmc, $r20
+	;;
+	#NO_APP
+	get $r0 = $pm0
+	;;
+	cb.odd $r1 ? .LBB3_6
+	;;
+	ld $r1 = 0[$r22]
+	get $r18 = $pm0
+	;;
+	sbfd $r19 = $r1, $r0
+	;;
+	copyd $r0 = $r19
+	call __floatdisf
+	;;
+	make $r1 = 0x43020000
+	call __divsf3
+	;;
+	make $r0 = .L.str.4
+	make $r1 = .L.str
+	fwidenlwd $r4 = $r0
+	make $r5 = 130
+	;;
+	copyd $r2 = $r18
+	copyd $r3 = $r19
+	call printf
+	;;
+	get $r0 = $pm0
+	;;
+	sd 0[$r22] = $r0
+	get $r0 = $pm1
+	;;
+	ld $r1 = 0[$r23]
+	get $r18 = $pm1
+	;;
+	sbfd $r19 = $r1, $r0
+	;;
+	copyd $r0 = $r19
+	call __floatdisf
+	;;
+	make $r1 = 0x43020000
+	call __divsf3
+	;;
+	make $r0 = .L.str.4
+	make $r1 = .L.str.1
+	fwidenlwd $r4 = $r0
+	make $r5 = 130
+	;;
+	copyd $r2 = $r18
+	copyd $r3 = $r19
+	call printf
+	;;
+	get $r0 = $pm1
+	;;
+	sd 0[$r23] = $r0
+	get $r0 = $pm2
+	;;
+	ld $r1 = 0[$r24]
+	get $r18 = $pm2
+	;;
+	sbfd $r19 = $r1, $r0
+	;;
+	copyd $r0 = $r19
+	call __floatdisf
+	;;
+	make $r1 = 0x43020000
+	call __divsf3
+	;;
+	make $r0 = .L.str.4
+	make $r1 = .L.str.2
+	fwidenlwd $r4 = $r0
+	make $r5 = 130
+	;;
+	copyd $r2 = $r18
+	copyd $r3 = $r19
+	call printf
+	;;
+	get $r0 = $pm2
+	;;
+	sd 0[$r24] = $r0
+	get $r0 = $pm3
+	;;
+	ld $r1 = 0[$r25]
+	get $r18 = $pm3
+	;;
+	sbfd $r19 = $r1, $r0
+	;;
+	copyd $r0 = $r19
+	call __floatdisf
+	;;
+	make $r1 = 0x43020000
+	call __divsf3
+	;;
+	make $r0 = .L.str.4
+	make $r1 = .L.str.3
+	fwidenlwd $r4 = $r0
+	make $r5 = 130
+	;;
+	copyd $r2 = $r18
+	copyd $r3 = $r19
+	call printf
+	;;
+	goto .LBB3_7
+	;;
+.LBB3_6:
+	get $r0 = $pm0
+	;;
+	sd 0[$r22] = $r0
+	get $r0 = $pm1
+	;;
+	get $r0 = $pm1
+	;;
+	sd 0[$r23] = $r0
+	get $r0 = $pm2
+	;;
+	get $r0 = $pm2
+	;;
+	sd 0[$r24] = $r0
+	get $r0 = $pm3
+	;;
+.LBB3_7:
+	get $r0 = $pm3
+	make $r18 = 0
+	;;
+	sd 0[$r25] = $r0
+	goto .LBB3_8
+	;;
+.LBB3_18:
+	addd $r18 = $r18, 1
+	;;
+	compd.eq $r0 = $r18, 130
+	;;
+	cb.odd $r0 ? .LBB3_19
+	;;
+.LBB3_8:
+	make $r19 = 0
+	goto .LBB3_9
+	;;
+.LBB3_17:
+	addw $r19 = $r19, 4
+	;;
+	compw.eq $r0 = $r19, 16
+	;;
+	cb.odd $r0 ? .LBB3_18
+	;;
+.LBB3_9:
+	lo.xs $r0r1r2r3 = $r18[$r26]
+	;;
+	sd 376[$r12] = $r3
+	;;
+	sd 368[$r12] = $r2
+	;;
+	sd 360[$r12] = $r1
+	addd $r1 = $r12, 352
+	;;
+	sd 352[$r12] = $r0
+	andd $r0 = $r19, 15
+	;;
+	lo.xs $r4r5r6r7 = $r18[$r29]
+	;;
+	addd $r1 = $r12, 320
+	lhs.xs $r3 = $r0[$r1]
+	;;
+	sd 344[$r12] = $r7
+	;;
+	sd 336[$r12] = $r6
+	;;
+	sd 328[$r12] = $r5
+	;;
+	sd 320[$r12] = $r4
+	;;
+	lo.xs $r8r9r10r11 = $r18[$r30]
+	;;
+	addd $r1 = $r12, 288
+	lhs.xs $r4 = $r0[$r1]
+	;;
+	sd 312[$r12] = $r11
+	;;
+	sd 304[$r12] = $r10
+	;;
+	sd 296[$r12] = $r9
+	;;
+	sd 288[$r12] = $r8
+	;;
+	lhs.xs $r5 = $r0[$r1]
+	;;
+	addw $r0 = $r5, $r4
+	;;
+	compw.eq $r0 = $r0, $r3
+	;;
+	cb.odd $r0 ? .LBB3_11
+	;;
+	make $r0 = .L.str.5
+	copyd $r1 = $r18
+	copyd $r2 = $r19
+	call printf
+	;;
+.LBB3_11:
+	lo.xs $r0r1r2r3 = $r18[$r26]
+	;;
+	sd 280[$r12] = $r3
+	;;
+	sd 272[$r12] = $r2
+	addw $r2 = $r19, 1
+	;;
+	sd 264[$r12] = $r1
+	andd $r1 = $r2, 15
+	;;
+	sd 256[$r12] = $r0
+	addd $r0 = $r12, 256
+	;;
+	lo.xs $r4r5r6r7 = $r18[$r29]
+	;;
+	addd $r0 = $r12, 224
+	lhs.xs $r3 = $r1[$r0]
+	;;
+	sd 248[$r12] = $r7
+	;;
+	sd 240[$r12] = $r6
+	;;
+	sd 232[$r12] = $r5
+	;;
+	sd 224[$r12] = $r4
+	;;
+	lo.xs $r8r9r10r11 = $r18[$r30]
+	;;
+	addd $r0 = $r12, 192
+	lhs.xs $r4 = $r1[$r0]
+	;;
+	sd 216[$r12] = $r11
+	;;
+	sd 208[$r12] = $r10
+	;;
+	sd 200[$r12] = $r9
+	;;
+	sd 192[$r12] = $r8
+	;;
+	lhs.xs $r5 = $r1[$r0]
+	;;
+	addw $r0 = $r5, $r4
+	;;
+	compw.eq $r0 = $r0, $r3
+	;;
+	cb.odd $r0 ? .LBB3_13
+	;;
+	make $r0 = .L.str.5
+	copyd $r1 = $r18
+	call printf
+	;;
+.LBB3_13:
+	lo.xs $r0r1r2r3 = $r18[$r26]
+	;;
+	sd 184[$r12] = $r3
+	;;
+	sd 176[$r12] = $r2
+	addw $r2 = $r19, 2
+	;;
+	sd 168[$r12] = $r1
+	andd $r1 = $r2, 15
+	;;
+	sd 160[$r12] = $r0
+	addd $r0 = $r12, 160
+	;;
+	lo.xs $r4r5r6r7 = $r18[$r29]
+	;;
+	addd $r0 = $r12, 128
+	lhs.xs $r3 = $r1[$r0]
+	;;
+	sd 152[$r12] = $r7
+	;;
+	sd 144[$r12] = $r6
+	;;
+	sd 136[$r12] = $r5
+	;;
+	sd 128[$r12] = $r4
+	;;
+	lo.xs $r8r9r10r11 = $r18[$r30]
+	;;
+	addd $r0 = $r12, 96
+	lhs.xs $r4 = $r1[$r0]
+	;;
+	sd 120[$r12] = $r11
+	;;
+	sd 112[$r12] = $r10
+	;;
+	sd 104[$r12] = $r9
+	;;
+	sd 96[$r12] = $r8
+	;;
+	lhs.xs $r5 = $r1[$r0]
+	;;
+	addw $r0 = $r5, $r4
+	;;
+	compw.eq $r0 = $r0, $r3
+	;;
+	cb.odd $r0 ? .LBB3_15
+	;;
+	make $r0 = .L.str.5
+	copyd $r1 = $r18
+	call printf
+	;;
+.LBB3_15:
+	lo.xs $r0r1r2r3 = $r18[$r26]
+	;;
+	sd 88[$r12] = $r3
+	;;
+	sd 80[$r12] = $r2
+	addw $r2 = $r19, 3
+	;;
+	sd 72[$r12] = $r1
+	andd $r1 = $r2, 15
+	;;
+	sd 64[$r12] = $r0
+	addd $r0 = $r12, 64
+	;;
+	lo.xs $r4r5r6r7 = $r18[$r29]
+	;;
+	addd $r0 = $r12, 32
+	lhs.xs $r3 = $r1[$r0]
+	;;
+	sd 56[$r12] = $r7
+	;;
+	sd 48[$r12] = $r6
+	;;
+	sd 40[$r12] = $r5
+	;;
+	sd 32[$r12] = $r4
+	;;
+	lo.xs $r8r9r10r11 = $r18[$r30]
+	;;
+	addd $r0 = $r12, 0
+	lhs.xs $r4 = $r1[$r0]
+	;;
+	sd 24[$r12] = $r11
+	;;
+	sd 16[$r12] = $r10
+	;;
+	sd 8[$r12] = $r9
+	;;
+	sd 0[$r12] = $r8
+	;;
+	lhs.xs $r5 = $r1[$r0]
+	;;
+	addw $r0 = $r5, $r4
+	;;
+	compw.eq $r0 = $r0, $r3
+	;;
+	cb.odd $r0 ? .LBB3_17
+	;;
+	make $r0 = .L.str.5
+	copyd $r1 = $r18
+	call printf
+	;;
+	goto .LBB3_17
+	;;
+.LBB3_20:
+	lq $r18r19 = 400[$r12]
+	make $r0 = 0
+	;;
+	lo $r20r21r22r23 = 416[$r12]
+	;;
+	lo $r24r25r26r27 = 448[$r12]
+	;;
+	lq $r28r29 = 480[$r12]
+	;;
+	ld $r30 = 496[$r12]
+	;;
+	ld $r16 = 504[$r12]
+	;;
+	set $ra = $r16
+	addd $r12 = $r12, 512
+	;;
+	ret
+	;;
+.Lfunc_end3:
+	.size	main, .Lfunc_end3-main
+
+	.type	.L.str,@object
+	.section	.rodata.str1.1,"aMS",@progbits,1
+.L.str:
+	.asciz	"PCC"
+	.size	.L.str, 4
+
+	.type	.L.str.1,@object
+.L.str.1:
+	.asciz	"EBE"
+	.size	.L.str.1, 4
+
+	.type	.L.str.2,@object
+.L.str.2:
+	.asciz	"DARSC"
+	.size	.L.str.2, 6
+
+	.type	.L.str.3,@object
+.L.str.3:
+	.asciz	"FSC"
+	.size	.L.str.3, 4
+
+	.type	.L.str.4,@object
+.L.str.4:
+	.asciz	"%6s:%6lu delta:%6lld once: %0.2f (size:%d)\n"
+	.size	.L.str.4, 44
+
+	.type	a_,@object
+	.section	.bss,"aw",@nobits
+	.globl	a_
+	.p2align	5
+a_:
+	.zero	4160
+	.size	a_, 4160
+
+	.type	b_,@object
+	.globl	b_
+	.p2align	5
+b_:
+	.zero	4160
+	.size	b_, 4160
+
+	.type	r_,@object
+	.globl	r_
+	.p2align	5
+r_:
+	.zero	4160
+	.size	r_, 4160
+
+	.type	.L.str.5,@object
+	.section	.rodata.str1.1,"aMS",@progbits,1
+.L.str.5:
+	.asciz	"%ld[%d] KO: %d != %d + %d, \n"
+	.size	.L.str.5, 29
+
+	.type	papi_display.previous.0,@object
+	.local	papi_display.previous.0
+	.comm	papi_display.previous.0,8,8
+	.type	papi_display.previous.1,@object
+	.local	papi_display.previous.1
+	.comm	papi_display.previous.1,8,8
+	.type	papi_display.previous.2,@object
+	.local	papi_display.previous.2
+	.comm	papi_display.previous.2,8,8
+	.type	papi_display.previous.3,@object
+	.local	papi_display.previous.3
+	.comm	papi_display.previous.3,8,8
+	.ident	"Kalray clang version 12.0.1 (git:software/tools/llvm-project 5855f6ef25926c8d5ad4b3922351573205cb8a1e)"
+	.section	".note.GNU-stack","",@progbits

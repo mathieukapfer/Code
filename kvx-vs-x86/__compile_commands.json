@@ -1,0 +1,30 @@
+[
+    {
+        "arguments": [
+            "cc",
+            "-c",
+            "-I/work1/mkapfer/simde",
+            "-I/work1/mkapfer/compute_benchmarks/include",
+            "-I/work1/mkapfer/csw/kEnv/kvxtools/opt/kalray/accesscore/include",
+            "-o",
+            "output/build/hello_build/hello_mppa.c.o",
+            "hello_mppa.c"
+        ],
+        "directory": "/work1/mkapfer/mytest",
+        "file": "hello_mppa.c"
+    },
+    {
+        "arguments": [
+            "cc",
+            "-c",
+            "-march=kv3-1",
+            "-I/work1/mkapfer/simde",
+            "-I/work1/mkapfer/compute_benchmarks/include",
+            "-o",
+            "output/build/hello_mppa_build/hello_mppa.c.o",
+            "hello_mppa.c"
+        ],
+        "directory": "/work1/mkapfer/mytest",
+        "file": "hello_mppa.c"
+    }
+]

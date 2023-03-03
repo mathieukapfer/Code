@@ -1,0 +1,429 @@
+-*- mode: compilation; default-directory: "/work1/mkapfer/mytest/" -*-
+Compilation started at Mon Mar 21 13:53:44
+
+./run.sh | grep PCC
+clang-12: warning: -Wl,-lpapi--defsym=MPPA_COS_NB_CC=1: 'linker' input unused [-Wunused-command-line-argument]
+clang-12: warning: -Wl,--defsym=MPPA_COS_NB_CORES_LOG2=4: 'linker' input unused [-Wunused-command-line-argument]
+clang-12: warning: -Wl,--defsym=MPPA_COS_THREAD_PER_CORE_LOG2=0: 'linker' input unused [-Wunused-command-line-argument]
+In file included from hello_mppa_extract.c:24:
+./papi_util.h:110:75: warning: format specifies type 'long long' but the argument has type 'uint64_t' (aka 'unsigned long')
+      [-Wformat]
+      printf("%6s:%6lld delta:%6lld once:%6lld (%d)\n", PMC_NAME[index] , __cos_counter_num(index), delta[index], delt...
+                  ~~~~~                                                   ^~~~~~~~~~~~~~~~~~~~~~~~
+                  %6lu
+hello_mppa_extract.c:49:13: warning: unused variable 'start_cyc' [-Wunused-variable]
+  long long start_cyc, stop_cyc;;
+            ^
+hello_mppa_extract.c:49:24: warning: unused variable 'stop_cyc' [-Wunused-variable]
+  long long start_cyc, stop_cyc;;
+                       ^
+hello_mppa_extract.c:46:14: warning: unused parameter 'argc' [-Wunused-parameter]
+int main(int argc, char *argv[])
+             ^
+hello_mppa_extract.c:46:26: warning: unused parameter 'argv' [-Wunused-parameter]
+int main(int argc, char *argv[])
+                         ^
+5 warnings generated.
+clang-12: warning: -Wl,-lpapi--defsym=MPPA_COS_NB_CC=1: 'linker' input unused [-Wunused-command-line-argument]
+clang-12: warning: -Wl,--defsym=MPPA_COS_NB_CORES_LOG2=4: 'linker' input unused [-Wunused-command-line-argument]
+clang-12: warning: -Wl,--defsym=MPPA_COS_THREAD_PER_CORE_LOG2=0: 'linker' input unused [-Wunused-command-line-argument]
+hello_mppa.c:66:14: warning: unused parameter 'argc' [-Wunused-parameter]
+int main(int argc, char *argv[])
+             ^
+hello_mppa.c:66:26: warning: unused parameter 'argv' [-Wunused-parameter]
+int main(int argc, char *argv[])
+                         ^
+2 warnings generated.
+Cluster0@0.0:    PCC:  5499 delta:   328 once:     3 (100)
+clang-12: warning: -Wl,-lpapi--defsym=MPPA_COS_NB_CC=1: 'linker' input unused [-Wunused-command-line-argument]
+clang-12: warning: -Wl,--defsym=MPPA_COS_NB_CORES_LOG2=4: 'linker' input unused [-Wunused-command-line-argument]
+clang-12: warning: -Wl,--defsym=MPPA_COS_THREAD_PER_CORE_LOG2=0: 'linker' input unused [-Wunused-command-line-argument]
+In file included from hello_mppa_extract.c:24:
+./papi_util.h:110:75: warning: format specifies type 'long long' but the argument has type 'uint64_t' (aka 'unsigned long')
+      [-Wformat]
+      printf("%6s:%6lld delta:%6lld once:%6lld (%d)\n", PMC_NAME[index] , __cos_counter_num(index), delta[index], delt...
+                  ~~~~~                                                   ^~~~~~~~~~~~~~~~~~~~~~~~
+                  %6lu
+hello_mppa_extract.c:49:24: warning: unused variable 'stop_cyc' [-Wunused-variable]
+  long long start_cyc, stop_cyc;;
+                       ^
+hello_mppa_extract.c:49:13: warning: unused variable 'start_cyc' [-Wunused-variable]
+  long long start_cyc, stop_cyc;;
+            ^
+hello_mppa_extract.c:46:14: warning: unused parameter 'argc' [-Wunused-parameter]
+int main(int argc, char *argv[])
+             ^
+hello_mppa_extract.c:46:26: warning: unused parameter 'argv' [-Wunused-parameter]
+int main(int argc, char *argv[])
+                         ^
+5 warnings generated.
+clang-12: warning: -Wl,-lpapi--defsym=MPPA_COS_NB_CC=1: 'linker' input unused [-Wunused-command-line-argument]
+clang-12: warning: -Wl,--defsym=MPPA_COS_NB_CORES_LOG2=4: 'linker' input unused [-Wunused-command-line-argument]
+clang-12: warning: -Wl,--defsym=MPPA_COS_THREAD_PER_CORE_LOG2=0: 'linker' input unused [-Wunused-command-line-argument]
+hello_mppa.c:32:9: warning: 'VECTOR_SIZE' macro redefined [-Wmacro-redefined]
+#define VECTOR_SIZE 100
+        ^
+<command line>:1:9: note: previous definition is here
+#define VECTOR_SIZE 110
+        ^
+hello_mppa.c:66:14: warning: unused parameter 'argc' [-Wunused-parameter]
+int main(int argc, char *argv[])
+             ^
+hello_mppa.c:66:26: warning: unused parameter 'argv' [-Wunused-parameter]
+int main(int argc, char *argv[])
+                         ^
+3 warnings generated.
+Cluster0@0.0:    PCC:  6039 delta:   360 once:     3 (110)
+clang-12: warning: -Wl,-lpapi--defsym=MPPA_COS_NB_CC=1: 'linker' input unused [-Wunused-command-line-argument]
+clang-12: warning: -Wl,--defsym=MPPA_COS_NB_CORES_LOG2=4: 'linker' input unused [-Wunused-command-line-argument]
+clang-12: warning: -Wl,--defsym=MPPA_COS_THREAD_PER_CORE_LOG2=0: 'linker' input unused [-Wunused-command-line-argument]
+In file included from hello_mppa_extract.c:24:
+./papi_util.h:110:75: warning: format specifies type 'long long' but the argument has type 'uint64_t' (aka 'unsigned long')
+      [-Wformat]
+      printf("%6s:%6lld delta:%6lld once:%6lld (%d)\n", PMC_NAME[index] , __cos_counter_num(index), delta[index], delt...
+                  ~~~~~                                                   ^~~~~~~~~~~~~~~~~~~~~~~~
+                  %6lu
+hello_mppa_extract.c:49:24: warning: unused variable 'stop_cyc' [-Wunused-variable]
+  long long start_cyc, stop_cyc;;
+                       ^
+hello_mppa_extract.c:49:13: warning: unused variable 'start_cyc' [-Wunused-variable]
+  long long start_cyc, stop_cyc;;
+            ^
+hello_mppa_extract.c:46:14: warning: unused parameter 'argc' [-Wunused-parameter]
+int main(int argc, char *argv[])
+             ^
+hello_mppa_extract.c:46:26: warning: unused parameter 'argv' [-Wunused-parameter]
+int main(int argc, char *argv[])
+                         ^
+5 warnings generated.
+clang-12: warning: -Wl,-lpapi--defsym=MPPA_COS_NB_CC=1: 'linker' input unused [-Wunused-command-line-argument]
+clang-12: warning: -Wl,--defsym=MPPA_COS_NB_CORES_LOG2=4: 'linker' input unused [-Wunused-command-line-argument]
+clang-12: warning: -Wl,--defsym=MPPA_COS_THREAD_PER_CORE_LOG2=0: 'linker' input unused [-Wunused-command-line-argument]
+hello_mppa.c:32:9: warning: 'VECTOR_SIZE' macro redefined [-Wmacro-redefined]
+#define VECTOR_SIZE 100
+        ^
+<command line>:1:9: note: previous definition is here
+#define VECTOR_SIZE 120
+        ^
+hello_mppa.c:66:14: warning: unused parameter 'argc' [-Wunused-parameter]
+int main(int argc, char *argv[])
+             ^
+hello_mppa.c:66:26: warning: unused parameter 'argv' [-Wunused-parameter]
+int main(int argc, char *argv[])
+                         ^
+3 warnings generated.
+Cluster0@0.0:    PCC:  8372 delta:   578 once:     4 (120)
+clang-12: warning: -Wl,-lpapi--defsym=MPPA_COS_NB_CC=1: 'linker' input unused [-Wunused-command-line-argument]
+clang-12: warning: -Wl,--defsym=MPPA_COS_NB_CORES_LOG2=4: 'linker' input unused [-Wunused-command-line-argument]
+clang-12: warning: -Wl,--defsym=MPPA_COS_THREAD_PER_CORE_LOG2=0: 'linker' input unused [-Wunused-command-line-argument]
+In file included from hello_mppa_extract.c:24:
+./papi_util.h:110:75: warning: format specifies type 'long long' but the argument has type 'uint64_t' (aka 'unsigned long')
+      [-Wformat]
+      printf("%6s:%6lld delta:%6lld once:%6lld (%d)\n", PMC_NAME[index] , __cos_counter_num(index), delta[index], delt...
+                  ~~~~~                                                   ^~~~~~~~~~~~~~~~~~~~~~~~
+                  %6lu
+hello_mppa_extract.c:49:13: warning: unused variable 'start_cyc' [-Wunused-variable]
+  long long start_cyc, stop_cyc;;
+            ^
+hello_mppa_extract.c:49:24: warning: unused variable 'stop_cyc' [-Wunused-variable]
+  long long start_cyc, stop_cyc;;
+                       ^
+hello_mppa_extract.c:46:14: warning: unused parameter 'argc' [-Wunused-parameter]
+int main(int argc, char *argv[])
+             ^
+hello_mppa_extract.c:46:26: warning: unused parameter 'argv' [-Wunused-parameter]
+int main(int argc, char *argv[])
+                         ^
+5 warnings generated.
+clang-12: warning: -Wl,-lpapi--defsym=MPPA_COS_NB_CC=1: 'linker' input unused [-Wunused-command-line-argument]
+clang-12: warning: -Wl,--defsym=MPPA_COS_NB_CORES_LOG2=4: 'linker' input unused [-Wunused-command-line-argument]
+clang-12: warning: -Wl,--defsym=MPPA_COS_THREAD_PER_CORE_LOG2=0: 'linker' input unused [-Wunused-command-line-argument]
+hello_mppa.c:32:9: warning: 'VECTOR_SIZE' macro redefined [-Wmacro-redefined]
+#define VECTOR_SIZE 100
+        ^
+<command line>:1:9: note: previous definition is here
+#define VECTOR_SIZE 130
+        ^
+hello_mppa.c:66:14: warning: unused parameter 'argc' [-Wunused-parameter]
+int main(int argc, char *argv[])
+             ^
+hello_mppa.c:66:26: warning: unused parameter 'argv' [-Wunused-parameter]
+int main(int argc, char *argv[])
+                         ^
+3 warnings generated.
+Cluster0@0.0:    PCC:  9099 delta:   644 once:     4 (130)
+clang-12: warning: -Wl,-lpapi--defsym=MPPA_COS_NB_CC=1: 'linker' input unused [-Wunused-command-line-argument]
+clang-12: warning: -Wl,--defsym=MPPA_COS_NB_CORES_LOG2=4: 'linker' input unused [-Wunused-command-line-argument]
+clang-12: warning: -Wl,--defsym=MPPA_COS_THREAD_PER_CORE_LOG2=0: 'linker' input unused [-Wunused-command-line-argument]
+In file included from hello_mppa_extract.c:24:
+./papi_util.h:110:75: warning: format specifies type 'long long' but the argument has type 'uint64_t' (aka 'unsigned long')
+      [-Wformat]
+      printf("%6s:%6lld delta:%6lld once:%6lld (%d)\n", PMC_NAME[index] , __cos_counter_num(index), delta[index], delt...
+                  ~~~~~                                                   ^~~~~~~~~~~~~~~~~~~~~~~~
+                  %6lu
+hello_mppa_extract.c:49:13: warning: unused variable 'start_cyc' [-Wunused-variable]
+  long long start_cyc, stop_cyc;;
+            ^
+hello_mppa_extract.c:49:24: warning: unused variable 'stop_cyc' [-Wunused-variable]
+  long long start_cyc, stop_cyc;;
+                       ^
+hello_mppa_extract.c:46:14: warning: unused parameter 'argc' [-Wunused-parameter]
+int main(int argc, char *argv[])
+             ^
+hello_mppa_extract.c:46:26: warning: unused parameter 'argv' [-Wunused-parameter]
+int main(int argc, char *argv[])
+                         ^
+5 warnings generated.
+clang-12: warning: -Wl,-lpapi--defsym=MPPA_COS_NB_CC=1: 'linker' input unused [-Wunused-command-line-argument]
+clang-12: warning: -Wl,--defsym=MPPA_COS_NB_CORES_LOG2=4: 'linker' input unused [-Wunused-command-line-argument]
+clang-12: warning: -Wl,--defsym=MPPA_COS_THREAD_PER_CORE_LOG2=0: 'linker' input unused [-Wunused-command-line-argument]
+hello_mppa.c:32:9: warning: 'VECTOR_SIZE' macro redefined [-Wmacro-redefined]
+#define VECTOR_SIZE 100
+        ^
+<command line>:1:9: note: previous definition is here
+#define VECTOR_SIZE 140
+        ^
+hello_mppa.c:66:14: warning: unused parameter 'argc' [-Wunused-parameter]
+int main(int argc, char *argv[])
+             ^
+hello_mppa.c:66:26: warning: unused parameter 'argv' [-Wunused-parameter]
+int main(int argc, char *argv[])
+                         ^
+3 warnings generated.
+Cluster0@0.0:    PCC: 19287 delta:  1751 once:    12 (140)
+clang-12: warning: -Wl,-lpapi--defsym=MPPA_COS_NB_CC=1: 'linker' input unused [-Wunused-command-line-argument]
+clang-12: warning: -Wl,--defsym=MPPA_COS_NB_CORES_LOG2=4: 'linker' input unused [-Wunused-command-line-argument]
+clang-12: warning: -Wl,--defsym=MPPA_COS_THREAD_PER_CORE_LOG2=0: 'linker' input unused [-Wunused-command-line-argument]
+In file included from hello_mppa_extract.c:24:
+./papi_util.h:110:75: warning: format specifies type 'long long' but the argument has type 'uint64_t' (aka 'unsigned long')
+      [-Wformat]
+      printf("%6s:%6lld delta:%6lld once:%6lld (%d)\n", PMC_NAME[index] , __cos_counter_num(index), delta[index], delt...
+                  ~~~~~                                                   ^~~~~~~~~~~~~~~~~~~~~~~~
+                  %6lu
+hello_mppa_extract.c:49:13: warning: unused variable 'start_cyc' [-Wunused-variable]
+  long long start_cyc, stop_cyc;;
+            ^
+hello_mppa_extract.c:49:24: warning: unused variable 'stop_cyc' [-Wunused-variable]
+  long long start_cyc, stop_cyc;;
+                       ^
+hello_mppa_extract.c:46:14: warning: unused parameter 'argc' [-Wunused-parameter]
+int main(int argc, char *argv[])
+             ^
+hello_mppa_extract.c:46:26: warning: unused parameter 'argv' [-Wunused-parameter]
+int main(int argc, char *argv[])
+                         ^
+5 warnings generated.
+clang-12: warning: -Wl,-lpapi--defsym=MPPA_COS_NB_CC=1: 'linker' input unused [-Wunused-command-line-argument]
+clang-12: warning: -Wl,--defsym=MPPA_COS_NB_CORES_LOG2=4: 'linker' input unused [-Wunused-command-line-argument]
+clang-12: warning: -Wl,--defsym=MPPA_COS_THREAD_PER_CORE_LOG2=0: 'linker' input unused [-Wunused-command-line-argument]
+hello_mppa.c:32:9: warning: 'VECTOR_SIZE' macro redefined [-Wmacro-redefined]
+#define VECTOR_SIZE 100
+        ^
+<command line>:1:9: note: previous definition is here
+#define VECTOR_SIZE 150
+        ^
+hello_mppa.c:66:14: warning: unused parameter 'argc' [-Wunused-parameter]
+int main(int argc, char *argv[])
+             ^
+hello_mppa.c:66:26: warning: unused parameter 'argv' [-Wunused-parameter]
+int main(int argc, char *argv[])
+                         ^
+3 warnings generated.
+Cluster0@0.0:    PCC: 29929 delta:  2903 once:    19 (150)
+clang-12: warning: -Wl,-lpapi--defsym=MPPA_COS_NB_CC=1: 'linker' input unused [-Wunused-command-line-argument]
+clang-12: warning: -Wl,--defsym=MPPA_COS_NB_CORES_LOG2=4: 'linker' input unused [-Wunused-command-line-argument]
+clang-12: warning: -Wl,--defsym=MPPA_COS_THREAD_PER_CORE_LOG2=0: 'linker' input unused [-Wunused-command-line-argument]
+In file included from hello_mppa_extract.c:24:
+./papi_util.h:110:75: warning: format specifies type 'long long' but the argument has type 'uint64_t' (aka 'unsigned long')
+      [-Wformat]
+      printf("%6s:%6lld delta:%6lld once:%6lld (%d)\n", PMC_NAME[index] , __cos_counter_num(index), delta[index], delt...
+                  ~~~~~                                                   ^~~~~~~~~~~~~~~~~~~~~~~~
+                  %6lu
+hello_mppa_extract.c:49:13: warning: unused variable 'start_cyc' [-Wunused-variable]
+  long long start_cyc, stop_cyc;;
+            ^
+hello_mppa_extract.c:49:24: warning: unused variable 'stop_cyc' [-Wunused-variable]
+  long long start_cyc, stop_cyc;;
+                       ^
+hello_mppa_extract.c:46:14: warning: unused parameter 'argc' [-Wunused-parameter]
+int main(int argc, char *argv[])
+             ^
+hello_mppa_extract.c:46:26: warning: unused parameter 'argv' [-Wunused-parameter]
+int main(int argc, char *argv[])
+                         ^
+5 warnings generated.
+clang-12: warning: -Wl,-lpapi--defsym=MPPA_COS_NB_CC=1: 'linker' input unused [-Wunused-command-line-argument]
+clang-12: warning: -Wl,--defsym=MPPA_COS_NB_CORES_LOG2=4: 'linker' input unused [-Wunused-command-line-argument]
+clang-12: warning: -Wl,--defsym=MPPA_COS_THREAD_PER_CORE_LOG2=0: 'linker' input unused [-Wunused-command-line-argument]
+hello_mppa.c:32:9: warning: 'VECTOR_SIZE' macro redefined [-Wmacro-redefined]
+#define VECTOR_SIZE 100
+        ^
+<command line>:1:9: note: previous definition is here
+#define VECTOR_SIZE 160
+        ^
+hello_mppa.c:66:14: warning: unused parameter 'argc' [-Wunused-parameter]
+int main(int argc, char *argv[])
+             ^
+hello_mppa.c:66:26: warning: unused parameter 'argv' [-Wunused-parameter]
+int main(int argc, char *argv[])
+                         ^
+3 warnings generated.
+Cluster0@0.0:    PCC: 41740 delta:  4170 once:    26 (160)
+clang-12: warning: -Wl,-lpapi--defsym=MPPA_COS_NB_CC=1: 'linker' input unused [-Wunused-command-line-argument]
+clang-12: warning: -Wl,--defsym=MPPA_COS_NB_CORES_LOG2=4: 'linker' input unused [-Wunused-command-line-argument]
+clang-12: warning: -Wl,--defsym=MPPA_COS_THREAD_PER_CORE_LOG2=0: 'linker' input unused [-Wunused-command-line-argument]
+In file included from hello_mppa_extract.c:24:
+./papi_util.h:110:75: warning: format specifies type 'long long' but the argument has type 'uint64_t' (aka 'unsigned long')
+      [-Wformat]
+      printf("%6s:%6lld delta:%6lld once:%6lld (%d)\n", PMC_NAME[index] , __cos_counter_num(index), delta[index], delt...
+                  ~~~~~                                                   ^~~~~~~~~~~~~~~~~~~~~~~~
+                  %6lu
+hello_mppa_extract.c:49:13: warning: unused variable 'start_cyc' [-Wunused-variable]
+  long long start_cyc, stop_cyc;;
+            ^
+hello_mppa_extract.c:49:24: warning: unused variable 'stop_cyc' [-Wunused-variable]
+  long long start_cyc, stop_cyc;;
+                       ^
+hello_mppa_extract.c:46:14: warning: unused parameter 'argc' [-Wunused-parameter]
+int main(int argc, char *argv[])
+             ^
+hello_mppa_extract.c:46:26: warning: unused parameter 'argv' [-Wunused-parameter]
+int main(int argc, char *argv[])
+                         ^
+5 warnings generated.
+clang-12: warning: -Wl,-lpapi--defsym=MPPA_COS_NB_CC=1: 'linker' input unused [-Wunused-command-line-argument]
+clang-12: warning: -Wl,--defsym=MPPA_COS_NB_CORES_LOG2=4: 'linker' input unused [-Wunused-command-line-argument]
+clang-12: warning: -Wl,--defsym=MPPA_COS_THREAD_PER_CORE_LOG2=0: 'linker' input unused [-Wunused-command-line-argument]
+hello_mppa.c:32:9: warning: 'VECTOR_SIZE' macro redefined [-Wmacro-redefined]
+#define VECTOR_SIZE 100
+        ^
+<command line>:1:9: note: previous definition is here
+#define VECTOR_SIZE 170
+        ^
+hello_mppa.c:66:14: warning: unused parameter 'argc' [-Wunused-parameter]
+int main(int argc, char *argv[])
+             ^
+hello_mppa.c:66:26: warning: unused parameter 'argv' [-Wunused-parameter]
+int main(int argc, char *argv[])
+                         ^
+3 warnings generated.
+Cluster0@0.0:    PCC: 42939 delta:  4292 once:    25 (170)
+clang-12: warning: -Wl,-lpapi--defsym=MPPA_COS_NB_CC=1: 'linker' input unused [-Wunused-command-line-argument]
+clang-12: warning: -Wl,--defsym=MPPA_COS_NB_CORES_LOG2=4: 'linker' input unused [-Wunused-command-line-argument]
+clang-12: warning: -Wl,--defsym=MPPA_COS_THREAD_PER_CORE_LOG2=0: 'linker' input unused [-Wunused-command-line-argument]
+In file included from hello_mppa_extract.c:24:
+./papi_util.h:110:75: warning: format specifies type 'long long' but the argument has type 'uint64_t' (aka 'unsigned long')
+      [-Wformat]
+      printf("%6s:%6lld delta:%6lld once:%6lld (%d)\n", PMC_NAME[index] , __cos_counter_num(index), delta[index], delt...
+                  ~~~~~                                                   ^~~~~~~~~~~~~~~~~~~~~~~~
+                  %6lu
+hello_mppa_extract.c:49:13: warning: unused variable 'start_cyc' [-Wunused-variable]
+  long long start_cyc, stop_cyc;;
+            ^
+hello_mppa_extract.c:49:24: warning: unused variable 'stop_cyc' [-Wunused-variable]
+  long long start_cyc, stop_cyc;;
+                       ^
+hello_mppa_extract.c:46:14: warning: unused parameter 'argc' [-Wunused-parameter]
+int main(int argc, char *argv[])
+             ^
+hello_mppa_extract.c:46:26: warning: unused parameter 'argv' [-Wunused-parameter]
+int main(int argc, char *argv[])
+                         ^
+5 warnings generated.
+clang-12: warning: -Wl,-lpapi--defsym=MPPA_COS_NB_CC=1: 'linker' input unused [-Wunused-command-line-argument]
+clang-12: warning: -Wl,--defsym=MPPA_COS_NB_CORES_LOG2=4: 'linker' input unused [-Wunused-command-line-argument]
+clang-12: warning: -Wl,--defsym=MPPA_COS_THREAD_PER_CORE_LOG2=0: 'linker' input unused [-Wunused-command-line-argument]
+hello_mppa.c:32:9: warning: 'VECTOR_SIZE' macro redefined [-Wmacro-redefined]
+#define VECTOR_SIZE 100
+        ^
+<command line>:1:9: note: previous definition is here
+#define VECTOR_SIZE 180
+        ^
+hello_mppa.c:66:14: warning: unused parameter 'argc' [-Wunused-parameter]
+int main(int argc, char *argv[])
+             ^
+hello_mppa.c:66:26: warning: unused parameter 'argv' [-Wunused-parameter]
+int main(int argc, char *argv[])
+                         ^
+3 warnings generated.
+Cluster0@0.0:    PCC: 45399 delta:  4538 once:    25 (180)
+clang-12: warning: -Wl,-lpapi--defsym=MPPA_COS_NB_CC=1: 'linker' input unused [-Wunused-command-line-argument]
+clang-12: warning: -Wl,--defsym=MPPA_COS_NB_CORES_LOG2=4: 'linker' input unused [-Wunused-command-line-argument]
+clang-12: warning: -Wl,--defsym=MPPA_COS_THREAD_PER_CORE_LOG2=0: 'linker' input unused [-Wunused-command-line-argument]
+In file included from hello_mppa_extract.c:24:
+./papi_util.h:110:75: warning: format specifies type 'long long' but the argument has type 'uint64_t' (aka 'unsigned long')
+      [-Wformat]
+      printf("%6s:%6lld delta:%6lld once:%6lld (%d)\n", PMC_NAME[index] , __cos_counter_num(index), delta[index], delt...
+                  ~~~~~                                                   ^~~~~~~~~~~~~~~~~~~~~~~~
+                  %6lu
+hello_mppa_extract.c:49:24: warning: unused variable 'stop_cyc' [-Wunused-variable]
+  long long start_cyc, stop_cyc;;
+                       ^
+hello_mppa_extract.c:49:13: warning: unused variable 'start_cyc' [-Wunused-variable]
+  long long start_cyc, stop_cyc;;
+            ^
+hello_mppa_extract.c:46:14: warning: unused parameter 'argc' [-Wunused-parameter]
+int main(int argc, char *argv[])
+             ^
+hello_mppa_extract.c:46:26: warning: unused parameter 'argv' [-Wunused-parameter]
+int main(int argc, char *argv[])
+                         ^
+5 warnings generated.
+clang-12: warning: -Wl,-lpapi--defsym=MPPA_COS_NB_CC=1: 'linker' input unused [-Wunused-command-line-argument]
+clang-12: warning: -Wl,--defsym=MPPA_COS_NB_CORES_LOG2=4: 'linker' input unused [-Wunused-command-line-argument]
+clang-12: warning: -Wl,--defsym=MPPA_COS_THREAD_PER_CORE_LOG2=0: 'linker' input unused [-Wunused-command-line-argument]
+hello_mppa.c:32:9: warning: 'VECTOR_SIZE' macro redefined [-Wmacro-redefined]
+#define VECTOR_SIZE 100
+        ^
+<command line>:1:9: note: previous definition is here
+#define VECTOR_SIZE 190
+        ^
+hello_mppa.c:66:14: warning: unused parameter 'argc' [-Wunused-parameter]
+int main(int argc, char *argv[])
+             ^
+hello_mppa.c:66:26: warning: unused parameter 'argv' [-Wunused-parameter]
+int main(int argc, char *argv[])
+                         ^
+3 warnings generated.
+Cluster0@0.0:    PCC: 47979 delta:  4796 once:    25 (190)
+clang-12: warning: -Wl,-lpapi--defsym=MPPA_COS_NB_CC=1: 'linker' input unused [-Wunused-command-line-argument]
+clang-12: warning: -Wl,--defsym=MPPA_COS_NB_CORES_LOG2=4: 'linker' input unused [-Wunused-command-line-argument]
+clang-12: warning: -Wl,--defsym=MPPA_COS_THREAD_PER_CORE_LOG2=0: 'linker' input unused [-Wunused-command-line-argument]
+In file included from hello_mppa_extract.c:24:
+./papi_util.h:110:75: warning: format specifies type 'long long' but the argument has type 'uint64_t' (aka 'unsigned long')
+      [-Wformat]
+      printf("%6s:%6lld delta:%6lld once:%6lld (%d)\n", PMC_NAME[index] , __cos_counter_num(index), delta[index], delt...
+                  ~~~~~                                                   ^~~~~~~~~~~~~~~~~~~~~~~~
+                  %6lu
+hello_mppa_extract.c:49:13: warning: unused variable 'start_cyc' [-Wunused-variable]
+  long long start_cyc, stop_cyc;;
+            ^
+hello_mppa_extract.c:49:24: warning: unused variable 'stop_cyc' [-Wunused-variable]
+  long long start_cyc, stop_cyc;;
+                       ^
+hello_mppa_extract.c:46:14: warning: unused parameter 'argc' [-Wunused-parameter]
+int main(int argc, char *argv[])
+             ^
+hello_mppa_extract.c:46:26: warning: unused parameter 'argv' [-Wunused-parameter]
+int main(int argc, char *argv[])
+                         ^
+5 warnings generated.
+clang-12: warning: -Wl,-lpapi--defsym=MPPA_COS_NB_CC=1: 'linker' input unused [-Wunused-command-line-argument]
+clang-12: warning: -Wl,--defsym=MPPA_COS_NB_CORES_LOG2=4: 'linker' input unused [-Wunused-command-line-argument]
+clang-12: warning: -Wl,--defsym=MPPA_COS_THREAD_PER_CORE_LOG2=0: 'linker' input unused [-Wunused-command-line-argument]
+hello_mppa.c:32:9: warning: 'VECTOR_SIZE' macro redefined [-Wmacro-redefined]
+#define VECTOR_SIZE 100
+        ^
+<command line>:1:9: note: previous definition is here
+#define VECTOR_SIZE 200
+        ^
+hello_mppa.c:66:14: warning: unused parameter 'argc' [-Wunused-parameter]
+int main(int argc, char *argv[])
+             ^
+hello_mppa.c:66:26: warning: unused parameter 'argv' [-Wunused-parameter]
+int main(int argc, char *argv[])
+                         ^
+3 warnings generated.
+Cluster0@0.0:    PCC: 52140 delta:  5210 once:    26 (200)
+
+Compilation finished at Mon Mar 21 13:54:06

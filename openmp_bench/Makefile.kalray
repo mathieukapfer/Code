@@ -1,0 +1,23 @@
+
+commun-srcs := main.cpp
+commun-cflags= -g -fopenmp -O2 -save-temps
+commun-lflags= -pthread -lpapi -fopenmp
+mppa-cflags=  -Wl,--defsym=MPPA_COS_NB_CORES_LOG2=4  -Wl,--defsym=MPPA_COS_THREAD_PER_CORE_LOG2=0
+
+openmp_bench_x86-srcs := $(commun-srcs)
+openmp_bench_x86-cppflags := $(commun-cflags) -march=native
+openmp_bench_x86-lflags := $(commun-lflags)
+host-bin := openmp_bench_x86
+
+openmp_bench_mppa-srcs := $(commun-srcs)
+openmp_bench_mppa-cppflags := $(commun-cflags) $(mppa-cflags)
+openmp_bench_mppa-lflags := $(commun-lflags) $(mppa-cflags)
+cluster-bin += openmp_bench_mppa
+
+run-mppa: openmp_bench_mppa
+	kvx-jtag-runner --exec-file=cluster0:output/bin/openmp_bench_mppa
+
+run-host: openmp_bench_x86
+	output/bin/openmp_bench_x86
+
+include $(KALRAY_TOOLCHAIN_DIR)/share/make/Makefile.kalray

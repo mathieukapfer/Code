@@ -1,0 +1,9 @@
+lttng create my-user-session --output=/tmp/my-user-trace
+lttng enable-event --userspace 'lttng_ust_tracelog:*' --loglevel=DEBUG
+lttng start
+./app-tracelog  one two three
+./app-tracelog
+./app-tracelog  one
+lttng stop
+lttng view
+lttng destroy

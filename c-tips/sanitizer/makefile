@@ -1,0 +1,1 @@
+CXXFLAGS=-fsanitize=address -g

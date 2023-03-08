@@ -1,0 +1,5 @@
+main.cpp:4:5:int call_me4(int, int)	16	static
+main.cpp:8:5:int call_me3(int, int, int, int)	40	static
+main.cpp:12:5:int call_me2(int, int)	32	static
+main.cpp:16:5:int call_me(int, int)	32	static
+main.cpp:21:5:int main(int, char**)	48	static

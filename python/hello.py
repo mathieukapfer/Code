@@ -14,3 +14,9 @@ print(f'my name is {name}')
 print(f'{name =}')   # consise format to print variable value for debug purpose
 print(f'{name:>10}') # test alignement, insert space left, right, middle with >, <, ^
 print(f'{"Hi" if name=="Bob" else "Hello"} {name}') # with condition
+
+# r-string is "raw" string
+print(r'do not interpret slash: \n')
+
+# both r and f can be mixed, usefull to build path file
+print(rf'the home path is: \home\{name}')

@@ -1,0 +1,80 @@
+# Copyright (C) 2008-2014 Kalray SA.
+#
+# All rights reserved.
+#
+# This makefile contains all the available features of the kalray makefile
+# The kalray makefile is a generic makefile for various applications.
+
+# Needed for Ubuntu/Debian since sh points to dash instead of bash...
+SHELL := /bin/bash
+
+KALRAY_TOOLCHAIN_DIR := $(shell echo $${KALRAY_TOOLCHAIN_DIR:-/usr/local/kvxtools/})
+
+# Common cflags and lflags (for all targets)
+# These flags will be propagated through the hierarchy
+cflags := -Wall
+lflags := -lm
+
+# Common flags for kvx binaries
+kvx-cflags := -fopenmp
+
+# Cluster binaries
+cluster-bin := cluster_1 cluster_2
+
+# Each *-srcs variable describe sources for the binaries
+cluster_1-srcs := file1.c file2.c
+cluster_2-srcs := file3.c file4.c
+
+# Object files already compiled can be added to the final binary using -objs
+cluster_2-objs := objfile.o
+
+# Same rule as the other but this time for host
+# It define the host programs we will compile
+host-bin := hostprog
+# Common flags for host programs
+host-cflags := -Wall
+host-lflags := -ldl
+
+hostprog-srcs := host1.c host2.c
+hostprog-cflags := -Werror
+hostprog-lflags := -lrt
+# As for the multibinary, a hostname different from the target name can be set
+hostprog-name := HostProg
+
+# If any additionnal files are created by user rules, they can be added here
+# for removal when make clean is called
+clean-extra-files := file1 folder1/
+
+# DTB stuff
+# dts target
+myfdt-dts := fdt/kvxb/emb01/default.dts
+myfdt-includes := fdt/common/
+
+# dtb to build
+dtb-bin := myfdt
+
+# Special hooks for user makefile
+
+# Hooks specified in help-hooks are rules which will be called after displaying
+# the default help
+help-hooks := my_help_rule
+# Pre build hooks will be called before build
+pre-build-hooks := pre_build_rule
+# Post build hooks will be called after build
+post-build-hooks := post_build_rule
+
+# Finally, include the Kalray Makefile which will instantiate the rules
+# and do the work
+include $(KALRAY_TOOLCHAIN_DIR)/share/make/Makefile.kalray
+
+
+# Define your rules after the include, otherwise, the first rule will be treated
+# as the default rule
+my_help_rule:
+	@echo "This is my custom help"
+
+pre_build_rule:
+	@echo "Starting build"
+
+post_build_rule:
+	@echo "Build done"

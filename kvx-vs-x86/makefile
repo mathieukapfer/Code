@@ -46,7 +46,6 @@ hello-cflags := $(common-cflags) -march=native #-mavx512bw -mavx512vl  #-march=c
 
 host-bin += hello
 
-include $(KALRAY_TOOLCHAIN_DIR)/share/make/Makefile.kalray
 
 run: run-mppa run-host
 
@@ -72,3 +71,10 @@ run-host: hello
 
 # SIMDE_X86_AVX2_NATIVE
 # SIMDE_X86_AVX2_ENABLE_NATIVE_ALIASES
+
+
+ifdef KALRAY_TOOLCHAIN_DIR
+include $(KALRAY_TOOLCHAIN_DIR)/share/make/Makefile.kalray
+else
+include ../kvx-make/Makefile.kalray
+endif

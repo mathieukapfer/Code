@@ -1,5 +1,8 @@
+# install
+sudo apt install libpapi-dev
 
-Type just:
+# run mppa
+make run-mppa
 
-make
-make run
+# run x86
+maek run-host

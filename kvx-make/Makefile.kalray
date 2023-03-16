@@ -1,0 +1,870 @@
+# SPDX-License-Identifier: GPL-2.0-only
+
+SHELL = /bin/bash
+__MAKEFILE_PATH = $(dir $(realpath $(lastword $(MAKEFILE_LIST))))
+
+__TOOLCHAIN_PREFIX := $(KALRAY_TOOLCHAIN_DIR)/bin/
+LINUX_TOOLCHAIN_DIR ?= $(realpath $(KALRAY_TOOLCHAIN_DIR)/../linux)
+CROSS_COMPILE ?= kvx-linux-
+
+# Default Compilers
+HOSTCC		?= gcc
+HOSTCXX		?= g++
+HOSTFC		?= gfortran
+HOSTAR		?= ar
+CREATE_MULTIBIN	?= $(KALRAY_TOOLCHAIN_DIR)/bin/kvx-create-multibinary
+KVX_MULTIBIN_UTILS ?= $(KALRAY_TOOLCHAIN_DIR)/bin/kvx-multibin-util
+KVX_TRACE_UTILS ?= $(KALRAY_TOOLCHAIN_DIR)/bin/kvx-trace-util
+KVX_CLUSTER	?= kvx-cluster
+KVX_MPPA	?= kvx-mppa
+KVX_JTAG_RUNNER	?= kvx-jtag-runner
+GENGETOPT	?= gengetopt
+DTC		?= $(KALRAY_TOOLCHAIN_DIR)/bin/dtc
+LOPPER	?= $(KALRAY_TOOLCHAIN_DIR)/share/lopper/lopper.py
+KVX_CLANG	?= $(__TOOLCHAIN_PREFIX)clang
+
+# Flags
+DEFAULT_CFLAGS		:=
+DEFAULT_CPPFLAGS	:=
+DEFAULT_DYN_LFLAGS      := -shared -nostdlib -Wl,--hash-style=sysv -Wl,-Bsymbolic
+
+DEFAULT_DYN_CFLAGS      := -fPIC -fno-builtin -fno-stack-check
+
+################################################################################
+#			    Binary and path checking
+################################################################################
+
+ifeq ($(strip $(KALRAY_TOOLCHAIN_DIR)),)
+  dummy := $(warning KALRAY_TOOLCHAIN_DIR is not set)
+endif
+
+PHONY += all
+all: __kvx_all FORCE
+
+################################################################################
+#			Compilation-dependent variables
+################################################################################
+
+# Default values
+arch ?= $(if $(wildcard /mppa/board0/archver),$(shell cat /mppa/board0/archver),kv3-1)
+LINUX_TOOLCHAIN_PREFIX ?= $(LINUX_TOOLCHAIN_DIR)/$(arch)/kvx-buildroot-linux-uclibc/bin/$(CROSS_COMPILE)
+
+ifeq ($(V),2)
+ifeq ($(MAKELEVEL),0)
+  $(info ========= Settings =========)
+  $(info arch:	         $(arch))
+  $(info platforms:      $(platforms))
+  $(info traces:         $(traces))
+  $(info mppa-bin:       $(mppa-bin))
+  $(info host-bin:       $(host-bin))
+  $(info cluster-bin:    $(cluster-bin))
+  $(info cluster-dynbin: $(cluster-dynbin))
+  $(info )
+  $(info cflags:         $(cflags))
+  $(info cppflags:       $(cppflags))
+  $(info lflags:         $(lflags))
+  $(info fcflags: 	 $(fcflags))
+  $(info kvx-cflags:      $(kvx-cflags))
+  $(info kvx-fcflags:	 $(kvx-fcflags))
+  $(info kvx-cppflags:    $(kvx-cppflags))
+  $(info kvx-lflags:      $(kvx-lflags))
+  $(info cluster-arch:        $(cluster-arch))
+  $(info cluster-cflags: $(cluster-cflags))
+  $(info cluster-lflags: $(cluster-lflags))
+  $(info cluster-fcflags: $(cluster-fcflags))
+  $(info cluster-cppflags: $(cluster-cppflags))
+  $(info cluster-dyn-cflags: $(cluster-dyn-cflags))
+  $(info cluster-dyn-lflags: $(cluster-dyn-lflags))
+  $(info cluster-dyn-fcflags: $(cluster-dyn-fcflags))
+  $(info cluster-dyn-cppflags: $(cluster-dyn-cppflags))
+  $(info host-cflags:    $(host-cflags))
+  $(info host-cppflags:  $(host-cppflags))
+  $(info host-lflags:    $(host-lflags))
+  $(info host-fcflags:    $(host-fcflags))
+  $(info ============================)
+endif
+endif
+
+################################################################################
+#				Directories
+################################################################################
+
+ifeq ($(V),)
+  quiet=quiet_
+  Q = @
+  MAKEFLAGS += --no-print-directory
+else
+  quiet =
+  Q =
+endif
+
+# Get rid of all make builtin rules
+.SUFFIXES:
+
+O ?= output
+
+# Default output directory
+BUILD_DIR := $(O)/build
+GEN_DIR := $(O)/gen
+BIN_DIR := $(O)/bin
+DOC_DIR := $(O)/doc
+KERNEL_DIR = $(O)/opencl_kernels
+DTS_DIR := $(O)/dts
+DTB_DIR := $(O)/dtb
+ITB_DIR := $(O)/itb
+LIB_OUTPUT_DIR := $(O)/lib
+LIB_REAL_OUTPUT_DIR = $(abspath $(LIB_OUTPUT_DIR))
+
+__KVX_ARCHS := kv3-1 kv3-2
+
+################################################################################
+#                              Generic Stuff
+################################################################################
+
+build_prefix := _build
+gen_prefix := _gen
+
+# Convenient variables
+comma   := ,
+squote  := '
+empty   :=
+space   := $(empty) $(empty)
+
+###
+# Name of target with a '.' as filename prefix. foo/bar.o => foo/.bar.o
+dot-target = $(dir $@).$(notdir $@)
+
+###
+# The temporary file to save gcc -MD generated dependencies must not
+# contain a comma
+depfile = $(subst $(comma),_,$(dot-target).d)
+
+###
+# Escape single quote for use in echo statements
+escsq = $(subst $(squote),'\$(squote)',$1)
+
+# >'< substitution is for echo to work,
+# >$< substitution to preserve $ when reloading .cmd file
+# note: when using inline perl scripts [perl -e '...$$t=1;...']
+# in $(cmd_xxx) double $$ your perl vars
+make-cmd = $(subst \#,\\\#,$(subst $$,$$$$,$(call escsq,$(cmd_$(1)))))
+
+# Short version is used, if $(quiet) equals `quiet_', otherwise full one.
+echo-cmd = $(if $($(quiet)cmd_$(1)),\
+	echo -e '  $(call escsq,$($(quiet)cmd_$(1)))$(echo-why)';)
+
+# Find any prerequisites that is newer than target or that does not exist.
+# PHONY targets skipped in both cases.
+any-prereq = $(filter-out $(PHONY),$?) $(filter-out $(PHONY) $(wildcard $^),$^)
+
+# Check if both arguments has same arguments. Result is empty string if equal.
+arg-check = $(strip $(filter-out $(cmd_$(1)), $(cmd_$@)) \
+                    $(filter-out $(cmd_$@),   $(cmd_$(1))) )
+
+# This is the tricky part.
+# We check if the current command is different from the last one or if a prereq
+# which is not phony has changed. if so, the command will be executed.
+# if not, the rule will reduce to an empty rule and thus will not be executed.
+build_if_changed = $(if $(strip $(any-prereq) $(arg-check)), \
+			@set -e; \
+			$(echo-cmd) $(cmd_$(1)); \
+			echo 'cmd_$@ := $(make-cmd)' > $(dot-target).cmd )
+
+# Execute a build command unconditionnaly
+build_cmd = @$(echo-cmd) $(cmd_$(1))
+
+# Display an error message
+error_msg = $(error $(1))
+
+quiet_cmd_copy	= COPY\t\t$< -> $@
+      cmd_copy	= mkdir -p $(dir $@); \
+			cp $< $@
+
+###
+# why - tell why a a target got build
+#       enabled by make V=2
+#       Output (listed in the order they are checked):
+#          (1) - due to target is PHONY
+#          (2) - due to target missing
+#          (3) - due to: file1.h file2.h
+#          (4) - due to command line change
+#          (5) - due to missing .cmd file
+#          (6) - due to target not in $(targets)
+# (1) PHONY targets are always build
+# (2) No target, so we better build it
+# (3) Prerequisite is newer than target
+# (4) The command line stored in the file named dir/.target.cmd
+#     differed from actual command line. This happens when compiler
+#     options changes
+# (5) No dir/.target.cmd file (used to store command line)
+# (6) No dir/.target.cmd file and target not listed in $(targets)
+#     This is a good hint that there is a bug in the kbuild file
+ifeq ($(V),2)
+why =                                                                        \
+    $(if $(filter $@, $(PHONY)),- due to target is PHONY,                    \
+        $(if $(wildcard $@),                                                 \
+            $(if $(strip $(any-prereq)),- due to: $(any-prereq),             \
+                $(if $(arg-check),                                           \
+                    $(if $(cmd_$@),- due to command line change,             \
+                        $(if $(filter $@, $(targets)),                       \
+                            - due to missing .cmd file,                      \
+                            - due to $(notdir $@) not in $$(targets)         \
+                         )                                                   \
+                     )                                                       \
+                 )                                                           \
+             ),                                                              \
+             - due to target missing                                         \
+         )                                                                   \
+     )
+
+echo-why = $(call escsq, $(strip $(why)))
+endif
+
+# Argument for gcc to  pass to cpreprocessor in order to generate
+# dependency files.
+# -MT is given to bypass a problem with gcc dependency generation name
+depgencmd = -MT $@ -MD -MP -MF $(depfile)
+
+# Check if a file exists
+check_file = 								\
+	dummy := $(if $(wildcard $(1)),,				\
+		    $(error file $(1) does not exists)			\
+		)
+
+cpp_subst = $(patsubst %.cpp,%.cpp.o,$($(1)-srcs)) 	\
+		$(patsubst %.C,%.C.o,$($(1)-srcs)) 	\
+		$(patsubst %.cxx,%.cxx.o,$($(1)-srcs)) 	\
+		$(patsubst %.CPP,%.CPP.o,$($(1)-srcs)) 	\
+		$(patsubst %.cc,%.cc.o,$($(1)-srcs)) 	\
+		$(patsubst %.c++,%.c++.o,$($(1)-srcs))
+
+f_subst = $(patsubst %.f90,%.f90.o,$($(1)-srcs)) 	\
+		$(patsubst %.F90,%.F90.o,$($(1)-srcs)) 	\
+		$(patsubst %.f,%.f.o,$($(1)-srcs)) 	\
+		$(patsubst %.F,%.F.o,$($(1)-srcs)) 	\
+		$(patsubst %.for,%.for.o,$($(1)-srcs))
+
+s_subst = $(patsubst %.S,%.S.o,$($(1)-srcs)) 	\
+		$(patsubst %.s,%.s.o,$($(1)-srcs))
+
+_gen_build_dir = $(BUILD_DIR)/$(1)$(build_prefix)
+_gen_gen_dir = $(GEN_DIR)/$(1)$(gen_prefix)
+
+src2build = $(subst ..,__,$(1))
+build2src = $(subst __,..,$(1))
+
+obj_build_dir = $(call src2build,$(addprefix $$($(1)_build_dir)/, $(2)))
+
+gen_file_dir = $(call src2build,$(addprefix $$($(1)_gen_dir)/, $(2)))
+
+arch_is_valid = $(if $(filter $(1),$(__KVX_ARCHS)),,$(error Invalid architecture $(1)))
+
+cc_option = $(shell $(1) -Werror $(2) -S -x c /dev/null -o /dev/null  &> /dev/null && echo $(2))
+
+__lib_static_suffix := .a
+__lib_shared_suffix := .so
+
+################################################################################
+#	Makefile plugin stuff
+################################################################################
+
+module_main_hooks =
+module_obj_hooks =
+module_clean_files =
+
+__use_modules := $(use-module) $(use-modules) ctest fit
+__module_str := $(__MAKEFILE_PATH)/modules/
+
+__all_modules = $(foreach m,$(strip $(__use_modules)),		\
+	$(if $(wildcard $(strip $(__module_str)$(m).mk)),	\
+		$(m).mk,					\
+		$(error Module $(m) does not exists)		\
+	)					 		\
+)
+
+define include_modules
+
+include $(addprefix $(__module_str),$(__all_modules))
+
+endef
+
+$(eval $(call include_modules))
+
+.SECONDEXPANSION:
+
+ggo_subst = $(patsubst %.ggo,%.c,$(filter %.ggo,$($(1)-srcs)))
+
+# Gengetopt generation rule
+quiet_cmd_common-ggo	= GEN GGO\t$@
+      cmd_common-ggo	= $(GENGETOPT) --file-name=$(notdir $(basename $<)) \
+			--output-dir=$(@D) $($(2)-gengetopt-flags) --arg-struct-name=$(notdir $(basename $<))_args_info \
+			--func-name=$(notdir $(basename $<))_cmdline < $<
+
+ggo_nowarn_flags = -Wno-switch-enum $(call cc_option,$(1),-Wno-unused-but-set-variable)
+
+#
+# $(1) = File to add nowarn flags
+# $(2) = Target to add include dir
+# $(3) = Compiler to use
+#
+define add_ggo_nowarn_flags
+$(1)_cflags += $(call ggo_nowarn_flags,$(3))
+$(1)_cppflags += $(call ggo_nowarn_flags,$(3))
+$(2)_cflags += -I$(dir $(1))
+$(2)_cppflags += -I$(dir $(1))
+endef
+
+################################################################################
+#				Host Part
+################################################################################
+
+# List of unique host-bin
+__host_bin = $(sort $(host-bin))
+__host_lib = $(sort $(host-lib))
+
+ifneq ($(__host_bin)$(__host_lib),)
+
+lib_prefix := lib
+
+# We do not support cross bitness compilation
+__KALRAY_LIB_OUTPUT_DIR := lib
+
+__HOST_COMMON_FLAGS = $(depgencmd) -I$(KALRAY_TOOLCHAIN_DIR)/include
+__HOST_KALRAY_TOOLCHAIN_DIR_LINK_FLAG :=  -L$(LIB_REAL_OUTPUT_DIR)/host/ -L$(KALRAY_TOOLCHAIN_DIR)/$(__KALRAY_LIB_OUTPUT_DIR)
+__HOST_KALRAY_TOOLCHAIN_DIR_LINK_FLAG +=  -Wl,-rpath='$$ORIGIN'/../$(__KALRAY_LIB_OUTPUT_DIR)
+__KALRAY_HOST_LFLAGS = $(lflags) $(host-lflags) $(__HOST_KALRAY_TOOLCHAIN_DIR_LINK_FLAG)
+__KALRAY_HOST_CFLAGS = $(DEFAULT_CFLAGS) $(cflags) $(host-cflags) $(__HOST_COMMON_FLAGS)
+__KALRAY_HOST_CPPFLAGS = $(DEFAULT_CPPFLAGS) $(cppflags) $(host-cppflags) $(__HOST_COMMON_FLAGS)
+
+__KALRAY_HOST_FCFLAGS = $(DEFAULT_FCFLAGS) $(fcflags) $(host-fcflags) $(__HOST_COMMON_FLAGS)
+
+__host_lib_cmd_static := $(HOSTAR) rcs
+__host_lib_cmd_shared := $(HOSTCC) -shared -o
+__host_lib_flags_static :=
+__host_lib_flags_shared := -fPIC
+#-Wl,-soname,
+
+# C executables linked based on several .o files
+host_cmulti	= $(foreach m,$(__host_bin),\
+		   $(if $($(m)-srcs),$(m)))
+
+# target made of previously compiled objects (only target specific link flags
+host_useobjs	= $(foreach l,$(__host_bin),\
+		   $(if $($(l)-use-objs),$(l)))
+
+# List of libraries
+host_clibs	= $(foreach l,$(__host_lib),\
+		   $(if $($(l)-srcs),$(l)))
+
+__host_all_binaries = $(host_cmulti) $(host_useobjs) $(host_clibs)
+
+# target made of multiple c files
+
+quiet_cmd_host_cmulti	= $($(2)_linker_msg)\t$@
+      cmd_host_cmulti	= $($(2)_linker) -o $@ $($(2)-objs) $($(2)_cobjs) $($(2)_sobjs) $($(2)_cppobjs) $($(2)_fobjs) \
+				$(__KALRAY_HOST_LFLAGS) $($(2)-lflags)
+
+# target made of previously compiled objects
+quiet_cmd_host_useobjs	= $($(3)_linker_msg)\t$@
+      cmd_host_useobjs	= $($(3)_linker) -o $@ $($(3)-objs) $($(3)_cobjs) $($(3)_sobjs) $($(3)_cppobjs) $($(3)_fobjs) \
+				$(__KALRAY_HOST_LFLAGS) $($(2)-lflags)
+
+# Libraries made of c files
+quiet_cmd_host_clibs	= HOST_LIB\t$@
+      cmd_host_clibs	= $(__host_lib_cmd_$($(2)_type)) $@ $($(2)-objs) $($(2)_cobjs) $($(2)_sobjs) $($(2)_cppobjs) \
+				$(if $(findstring shared,$($(2)_type)),$(__HOST_KALRAY_TOOLCHAIN_DIR_LINK_FLAG),) $($(2)-lflags)
+
+# Single .o for c files rule
+quiet_cmd_host-gcc-objs	= HOST_CC\t$@
+cmd_host-gcc-objs	= $(HOSTCC) $(__KALRAY_HOST_CFLAGS) $($(2)-cflags) $($(<)-cflags) $($(2)-$(<)-cflags) $($(<)_cflags) $($(2)_cflags) \
+				-c -o $@ $<
+
+# Single .o for c++ files rule
+quiet_cmd_host-gpp-objs	= HOST_CXX\t$@
+      cmd_host-gpp-objs	= $(HOSTCXX) $(__KALRAY_HOST_CPPFLAGS) $($(2)-cppflags) $($(<)-cppflags) $($(2)-$(<)-cppflags) $($(<)_cppflags) $($(2)_cppflags) \
+				-c -o $@ $<
+
+# Single .o for fortran files rule
+quiet_cmd_host-gfc-objs	= HOST_FC\t$@
+      cmd_host-gfc-objs	= $(HOSTFC) $(__KALRAY_HOST_FCFLAGS) $($(2)-fcflags) $($(<)-fcflags) $($(2)-$(<)-fcflags) \
+				-c -o $@ $<
+
+
+define host_multi_var
+# default name will be target name
+$(1)-name ?= $(1)
+endef
+
+
+#####################################################
+# Generates variables for a library
+# $(1) = target name
+#####################################################
+define host_lib_var
+# Output name, default to $(1) if no -name rule supplied
+$(1)_type := $(if $($(1)-type),$($(1)-type),shared)
+$(1)-name := $$(if $($(1)-name),lib$(strip $($(1)-name))$$(__lib_$$($(1)_type)_suffix),lib$(1)$$(__lib_$$($(1)_type)_suffix))
+$(1)-cflags += $$(__host_lib_flags_$$($(1)_type))
+$(1)-cppflags += $$(__host_lib_flags_$$($(1)_type))
+endef
+
+#####################################################
+# Defines rules for a target using multiple c files
+# $(1) = target name
+# $(2) = rule name to link objects (host_cmulti or host_clibs)
+# $(3) = Output directory
+#####################################################
+define host_generic_rules
+# build directory for this binary
+$(1)_build_dir := $(_gen_build_dir)
+$(1)_gen_dir := $(_gen_gen_dir)
+
+# Extract ggo and add them as dependency and in compile flags
+$(1)_ggo_files := $(call gen_file_dir,$(1),$(ggo_subst))
+$(1)_clibs := $$(foreach m,$$(filter $$(host_clibs),$$($(1)-deps) $$($(1)-link-deps)),$$$$($$(m)_outfile))
+$(1)_deps := $$($(1)_ggo_files) $($(1)-deps) $$($(1)_clibs)
+
+# Add no warning flags for ggo generated file
+$$(foreach ggo_file,$$(call gen_file_dir,$(1),$(ggo_subst)),$$(eval $$(call add_ggo_nowarn_flags,$$(ggo_file),$(1),gcc)))
+
+# List of objects for c and c++ files
+$(1)_cobjs := $(call obj_build_dir,$(1),$(filter %.o, $(patsubst %.c,%.c.o,$($(1)-srcs))))
+# Add ggo objects if any
+$(1)_cobjs += $(call obj_build_dir,$(1),$(patsubst %.c,%.c.o,$(call gen_file_dir,$(1),$(ggo_subst))))
+
+$(1)_cppobjs := $(call obj_build_dir,$(1),$(filter %.o, $(cpp_subst)))
+$(1)_fobjs := $(call obj_build_dir,$(1),$(filter %.o, $(f_subst)))
+$(1)_sobjs := $(call obj_build_dir,$(1),$(filter %.o, $(s_subst)))
+host_objslist += $$($(1)_cobjs) $$($(1)_cppobjs) $$($(1)_sobjs) $$($(1)_fobjs) $(3)/$$($(1)-name)
+
+$(1)_outfile := $(3)/$$($(1)-name)
+
+$(1)_linker_msg := $$(if $$($(1)_fobjs),HOST_FLD,$$(if $$($(1)_cppobjs),HOST_LDXX,HOST_LD))
+$(1)_linker := $$(if $$($(1)_fobjs), $(HOSTFC), $$(if $$($(1)_cppobjs),$(HOSTCXX),$(HOSTCC)))
+
+$$($(1)_outfile): $$($(1)_cobjs) $$($(1)_sobjs) $$($(1)_cppobjs) $$($(1)_fobjs) $($(1)-link-deps) $(3)/.dirstamp FORCE
+	$$(call build_if_changed,$(2),$(1))
+
+PHONY += $(1)
+$(1): $$($(1)_outfile) FORCE
+
+$$($(1)_ggo_files): $$($(1)_gen_dir)/%.c: $$$$(subst __,..,%.ggo) $$$$(@D)/.dirstamp
+	$$(call build_if_changed,common-ggo,$(1))
+
+# The $$$$ may seems a little WTF but allows for double-double expansion
+# this allows to handle ../ in a transparent maneer (thanks to .SECONDEXPANSION)
+$$($(1)_cobjs) $$($(1)_sobjs): $$($(1)_build_dir)/%.o: $$$$(subst __,..,%) $$($(1)_deps)  $$$$(@D)/.dirstamp FORCE
+	$$(call build_if_changed,host-gcc-objs,$(1))
+
+$$($(1)_cppobjs): $$($(1)_build_dir)/%.o: $$$$(subst __,..,%) $$($(1)_deps) $$$$(@D)/.dirstamp FORCE
+	$$(call build_if_changed,host-gpp-objs,$(1))
+
+$$($(1)_fobjs): $$($(1)_build_dir)/%.o: % $$($(1)_deps) $$$$(@D)/.dirstamp FORCE
+	$(Q)mkdir -p $$(dir $$@)
+	$$(call build_if_changed,host-gfc-objs,$(1))
+
+endef
+
+#####################################################
+# Defines rules for a useobjs target (reuse already
+# compiled objects from another binary)
+# $(1) = target name
+#####################################################
+define host_useobjs_rules
+
+$(1)_inherited_bin := $($(1)-use-objs)
+host_objslist += $(BIN_DIR)/$$($(1)-name)
+
+$(BIN_DIR)/$$($(1)-name): $$($$($(1)_inherited_bin)_cobjs) $$($$($(1)_inherited_bin)_cppobjs) $$($$($(1)_inherited_bin)_fobjs) $$($$($(1)_inherited_bin)-link-deps) $$$$(@D)/.dirstamp FORCE
+	$$(call build_if_changed,host_useobjs,$(1),$$($(1)_inherited_bin))
+
+PHONY += $(1)
+$(1): $(BIN_DIR)/$$($(1)-name) FORCE
+
+endef
+
+# Invoke macros for binaries composed of multiple files
+$(foreach m,$(host_cmulti), $(eval $(call host_multi_var,$(m)) \
+					$(call host_generic_rules,$(m),host_cmulti,$(BIN_DIR))))
+# and then for librairies
+$(foreach l,$(host_clibs), $(eval $(call host_lib_var,$(l)) \
+					$(call host_generic_rules,$(l),host_clibs,$(LIB_OUTPUT_DIR)/host)))
+# and then for reuse objs
+$(foreach l,$(host_useobjs), $(eval $(call host_multi_var,$(l)) \
+					$(call host_useobjs_rules,$(l))))
+
+# end of no host binaries
+endif
+
+################################################################################
+#				KVX Part
+################################################################################
+
+cluster-system ?= cos
+cluster-compiler ?= gcc
+
+cos_toolchain_msg := COS
+mbr_toolchain_msg := MBR
+elf_toolchain_msg := ELF
+linux_toolchain_msg := LINUX
+
+KVX_READELF	?= $(__TOOLCHAIN_PREFIX)kvx-$(cluster-system)-readelf
+KVX_STRIP	?= $(__TOOLCHAIN_PREFIX)kvx-$(cluster-system)-strip
+
+# kvx-<name>-gcc matching
+mppabareruntime_toolchain_name := mbr
+mbr_toolchain_name := mbr
+cos_toolchain_name := cos
+elf_toolchain_name := elf
+bare_toolchain_name := elf
+linux_toolchain_name := linux
+
+__cluster_arch = $(if $(cluster-arch),$(cluster-arch),$(arch))
+
+$(call arch_is_valid,$(__cluster_arch))
+
+__KVX_COMMON_FLAGS =
+__KVX_COMMON_LFLAGS = -L$(LIB_REAL_OUTPUT_DIR)/cluster/
+
+__KVX_LFLAGS = $(__KVX_COMMON_FLAGS) $(__KVX_COMMON_LFLAGS) $(lflags) $(kvx-lflags) $(cluster-lflags)
+__KVX_CFLAGS = $(depgencmd) $(__KVX_COMMON_FLAGS) $(DEFAULT_CFLAGS) $(cflags) $(kvx-cflags) $(cluster-cflags)
+__KVX_CPPFLAGS = $(depgencmd) $(__KVX_COMMON_FLAGS) $(DEFAULT_CPPFLAGS) $(cppflags) $(kvx-cppflags) $(cluster-cppflags)
+__KVX_FCFLAGS = $(depgencmd) $(__KVX_COMMON_FLAGS) $(DEFAULT_CFLAGS) $(fcflags) $(kvx-fcflags) $(cluster-fcflags)
+
+__KVX_DYN_LFLAGS = $(DEFAULT_DYN_LFLAGS) $(__KVX_COMMON_FLAGS) $(__KVX_COMMON_LFLAGS) $(lflags) $(kvx-lflags) $(cluster-dyn-lflags)
+__KVX_DYN_CFLAGS = $(depgencmd) $(__KVX_COMMON_FLAGS) $(DEFAULT_CFLAGS) $(cflags) $(kvx-cflags) $(cluster-dyn-cflags) $(DEFAULT_DYN_CFLAGS)
+__KVX_DYN_CPPFLAGS = $(depgencmd) $(__KVX_COMMON_FLAGS) $(DEFAULT_CPPFLAGS) $(cppflags) $(kvx-cppflags) $(cluster-dyn-cppflags) $(DEFAULT_DYN_CFLAGS)
+__KVX_DYN_FCFLAGS = $(depgencmd) $(__KVX_COMMON_FLAGS) $(DEFAULT_CFLAGS) $(fcflags) $(kvx-fcflags) $(cluster-dyn-fcflags) $(DEFAULT_DYN_CFLAGS)
+
+# Sounds dumb but is way more easier than testing with findstring
+linux_is_linux = 1
+
+get_cross_prefix = \
+	$(strip $(if $($($(1)-system)_is_linux),\
+		$(LINUX_TOOLCHAIN_PREFIX),\
+		$(__TOOLCHAIN_PREFIX)kvx-$($($(1)-system)_toolchain_name)-\
+	))
+
+gcc_c_compiler = gcc
+gcc_cpp_compiler = g++
+
+#
+# Select gcc variant (gcc/g++) and flags according to the language type and the
+# target
+# $(1) = target
+# $(2) = language (c, cpp)
+#
+cluster_gcc_compiler = \
+	$(call get_cross_prefix,$(1))$(gcc_$(2)_compiler) -march=$($(1)-arch)
+
+llvm_target_cos = cos
+llvm_target_elf = osp
+
+#
+# Select llvm and -target option according to the language type and the target
+# $(1) = target
+#
+cluster_llvm_compiler = \
+	$(if $(llvm_target_$($($(1)-system)_toolchain_name)),,$(error unsupported LLVM system $($(1)-system)))\
+	$(KVX_CLANG) --target=kvx-kalray-$(llvm_target_$($($(1)-system)_toolchain_name)) -march=$($(1)-arch)
+
+
+compiler_llvm_supported = 1
+compiler_gcc_supported = 1
+
+#
+# Select the compiler according to the language type and the target
+# $(1) = target
+# $(2) = language (c, cpp)
+#
+cluster_get_compiler = \
+	$(if $(compiler_$($(1)-compiler)_supported),,$(error unsupported compiler $($(1)-compiler)))\
+	$(call cluster_$($(1)-compiler)_compiler,$(1),$(2))\
+
+__kvx_lib_cmd_static = $(call get_cross_prefix,$(1))ar rcs
+__kvx_lib_cmd_shared = $($(1)_linker) -shared -o
+__kvx_lib_flags_static :=
+__kvx_lib_flags_shared := -fPIC
+#####################################################
+# Initialize default variables
+# $(1) = architecture type: DP
+#####################################################
+__kvx_all_binaries :=
+
+__cluster_bin := $(sort $(cluster-bin))
+__cluster_lib := $(sort $(cluster-lib))
+__cluster_dynbin := $(sort $(cluster-dynbin))
+
+# C executables linked based on several .o files
+cluster_cmulti = $(foreach m,$(__cluster_bin),\
+		   $(if $($(m)-srcs),$(m)))
+
+cluster_extbin = $(foreach m,$(__cluster_bin),\
+		   $(if $($(m)-srcs),,$(m)))
+
+cluster_dyn_cmulti = $(foreach m,$(__cluster_dynbin),\
+		   $(if $($(m)-srcs),$(m)))
+
+cluster_dyn_extbin = $(foreach m,$(__cluster_dynbin),\
+		   $(if $($(m)-srcs),,$(m)))
+
+cluster_clibs = $(foreach m,$(__cluster_lib),\
+		   $(if $($(m)-srcs),$(m)))
+
+cluster_useobjs = $(foreach m,$(__cluster_bin),\
+		   $(if $($(m)-use-objs),$(m)))
+
+__kvx_all_binaries += $(cluster_cmulti) $(cluster_extbin) $(cluster_dyn_cmulti) $(cluster_dyn_extbin) $(cluster_clibs) $(cluster_useobjs)
+
+
+# target made of multiple c files
+quiet_cmd_kvx_cmulti	= KVX$($(3)_linker_msg)\t\t$@
+      cmd_kvx_cmulti	= $($(3)_linker) -o $@ $($(3)-objs) $($(3)_cobjs) $($(3)_cppobjs) $($(3)_sobjs) \
+				$(__KVX$(2)_LFLAGS) $($(3)-lflags)
+
+# target made of previously compiled objects (only target specific link flags
+quiet_cmd_kvx_useobjs	= KVX$($(3)_linker_msg)\t$@
+      cmd_kvx_useobjs	= $($(3)_linker) -o $@ $($(3)-objs) $($(3)_cobjs) $($(3)_cppobjs) $($(3)_sobjs) \
+				$(__KVX_LFLAGS) $($(2)-lflags)
+
+# Libraries made of c files
+quiet_cmd_kvx_clibs	= KVX$(4)_LIB\t$@
+      cmd_kvx_clibs	= $(call __kvx_lib_cmd_$($(3)_type),$(3)) $@ $($(3)-objs) $($(3)_cobjs) $($(3)_cppobjs) $($(3)_sobjs)
+
+# Single .o rule
+quiet_cmd_kvx-gcc-objs	= KVX$(4)_CC\t\t$@
+      cmd_kvx-gcc-objs	= $($(3)_c_compiler) $(__KVX$(2)_CFLAGS) \
+					 $($(3)-cflags) $($(<)-cflags) $($(3)-$(<)-cflags) $($(<)_cflags) $($(3)_cflags) -c -o $@ $<
+
+quiet_cmd_kvx-gpp-objs	= KVX$(4)_CXX\t$@
+      cmd_kvx-gpp-objs	= $($(3)_cpp_compiler) $(__KVX$(2)_CPPFLAGS) \
+					 $($(3)-cppflags) $($(<)-cppflags) $($(3)-$(<)-cppflags) $($(<)_cppflags) $($(3)_cppflags) -c -o $@ $<
+
+#####################################################
+# Defines nameinmpk for all kvx binaries
+# $(1) = target name
+#####################################################
+define kvx_all_bin_rules
+$(1)-nameinmpk ?= $(1)
+$(1)-system ?= $(cluster-system)
+$(1)-compiler ?= $(cluster-compiler)
+$(1)-arch ?= $(__cluster_arch)
+endef
+
+$(foreach _b,$(__kvx_all_binaries),$(eval $(call kvx_all_bin_rules,$(_b))))\
+
+#####################################################
+# Defines rules for a target using multiple c files
+# $(1) = target name
+# $(2) = Whether the binary is a dynamic one (DYN)
+# $(3) = Target type: kvx_clibs/kvx_cmulti
+# $(4) = Target destination dir: bin/build
+#####################################################
+define kvx_generic_rules
+
+$(1)-name ?= $(1)
+$(1)_build_dir := $(_gen_build_dir)
+$(1)_gen_dir := $(_gen_gen_dir)
+$(1)_cobjs := $(call obj_build_dir,$(1),$(filter %.o, $(patsubst %.c,%.c.o,$($(1)-srcs))))
+$(1)_sobjs := $(call obj_build_dir,$(1),$(filter %.o, $(patsubst %.s,%.s.o,$($(1)-srcs))) \
+						$(filter %.o, $(patsubst %.S,%.S.o,$($(1)-srcs))))
+$(1)_cppobjs := $(call obj_build_dir,$(1),$(filter %.o, $(cpp_subst)))
+$(1)_outfile := $(4)/$$($(1)-name)
+
+# Extract ggo and add them as dependency and in compile flags
+$(1)_ggo_files := $(call gen_file_dir,$(1),$(ggo_subst))
+# Add link depencies as gcc doesn't generate makefile rules (.d files) when
+# doing links, this is needed when using static linked libraries which are
+# also built be this Makefile, aka cluster_clibs.
+$(1)_clibs := $$(foreach m,$$(filter $$(cluster_clibs),$$($(1)-deps) $$($(1)-link-deps)),$$$$($$(m)_outfile))
+$(1)_deps := $$($(1)_ggo_files) $($(1)-deps) $$($(1)_clibs)
+
+# Add ggo objects if any
+$(1)_cobjs += $(call obj_build_dir,$(1),$(patsubst %.c,%.c.o,$(call gen_file_dir,$(1),$(ggo_subst))))
+
+$(if $($($(1)-system)_toolchain_name),,$(error Invalid system name: $($(1)-system) !))
+
+# Messages and compiler selection
+$(1)_linker := $$(call cluster_gcc_compiler,$(1),$$(if $$($(1)_cppobjs),cpp,c))
+$(1)_c_compiler := $(call cluster_get_compiler,$(1),c)
+$(1)_cpp_compiler := $(call cluster_get_compiler,$(1),cpp)
+$(1)_flags_type := $(if $(2),_$(2),)
+$(1)_disp_msg := _$($($(1)-system)_toolchain_msg)$$($(1)_flags_type)
+$(1)_linker_msg := _$($($(1)-system)_toolchain_msg)$$(if $$($(1)_cppobjs),_LDXX,_LD)
+
+# Add no warning flags for ggo generated file
+$$(foreach ggo_file,$$(call gen_file_dir,$(1),$(ggo_subst)),$$(eval $$(call add_ggo_nowarn_flags,$$(ggo_file),$(1),$$($(1)_c_compiler))))
+
+kvx_objslist += $$($(1)_cobjs) $$($(1)_sobjs) $$($(1)_cppobjs) $(4)/$$($(1)-name)
+
+$$($(1)_outfile): $$($(1)_cobjs) $$($(1)_sobjs) $$($(1)_cppobjs) $($(1)-link-deps) $(4)/.dirstamp FORCE
+	$$(call build_if_changed,$(3),$(if $(2),_$(2),),$(1),$$($(1)_disp_msg))
+
+PHONY += $(1)
+$(1): $$($(1)_outfile) FORCE
+
+$$($(1)_ggo_files): $$($(1)_gen_dir)/%.c: $$$$(subst __,..,%.ggo) $$$$(@D)/.dirstamp
+	$$(call build_if_changed,common-ggo,$(1))
+
+$$($(1)_cobjs) $$($(1)_sobjs): $$($(1)_build_dir)/%.o: $$$$(subst __,..,%) $$($(1)_deps) $$$$(@D)/.dirstamp FORCE
+	$$(call build_if_changed,kvx-gcc-objs,$$($(1)_flags_type),$(1),$$($(1)_disp_msg))
+
+$$($(1)_cppobjs): $$($(1)_build_dir)/%.o: $$$$(subst __,..,%) $$($(1)_deps) $$$$(@D)/.dirstamp FORCE
+	$$(call build_if_changed,kvx-gpp-objs,$$($(1)_flags_type),$(1),$$($(1)_disp_msg))
+
+endef
+
+#####################################################
+# Defines rules for a useobjs target (reuse already
+# compiled objects from another binary)
+# $(1) = target name
+#####################################################
+define kvx_useobjs_rules
+# FIXME: error when inherited binary does not exist
+$(1)_inherited_bin := $($(1)-use-objs)
+
+kvx_objslist += $(BIN_DIR)/$(1)
+
+$(BIN_DIR)/$(1): $($(1)-link-deps)
+$(BIN_DIR)/$(1): $$($$($(1)_inherited_bin)_cobjs) $$($$($(1)_inherited_bin)_sobjs) $$($$($(1)_inherited_bin)_cppobjs) $$($$($(1)_inherited_bin)-link-deps) FORCE
+	$$(call build_if_changed,kvx_useobjs,$(1),$$($(1)_inherited_bin))
+
+PHONY += $(1)
+$(1): $(BIN_DIR)/$(1) FORCE
+
+endef
+
+# Type of supported library
+linux_shared_lib_supported := 1
+linux_static_lib_supported := 1
+cos_static_lib_supported := 1
+mbr_static_lib_supported := 1
+elf_static_lib_supported := 1
+
+# Default type for libraries
+elf_def_lib_type := static
+cos_def_lib_type := static
+mbr_def_lib_type := static
+linux_def_lib_type := shared
+
+define kvx_lib_rules
+
+$(1)_type := $(if $($(1)-type),$($(1)-type),$$($($($(1)-system)_toolchain_name)_def_lib_type))
+$(1)-name := $$(if $($(1)-name),lib$(strip $($(1)-name))$$(__lib_$$($(1)_type)_suffix),lib$(1)$$(__lib_$$($(1)_type)_suffix))
+$(1)-cflags += $$(__kvx_lib_flags_$$($(1)_type))
+$(1)-cppflags += $$(__kvx_lib_flags_$$($(1)_type))
+
+# Check if lib type is supported for io/dp, os combination
+$$(if $$($($($(1)-system)_toolchain_name)_$$($(1)_type)_lib_supported),,\
+  $$(error $(1): $$($(1)_type) library not supported for $($(1)-system)) \
+)
+endef
+
+# Invoke the rules
+$(foreach m,$(cluster_dyn_cmulti), $(eval $(call kvx_generic_rules,$(m),DYN,kvx_cmulti,$(BIN_DIR))))
+$(foreach m,$(cluster_cmulti), $(eval $(call kvx_generic_rules,$(m),,kvx_cmulti,$(BIN_DIR))))
+
+$(foreach m,$(cluster_clibs), $(eval $(call kvx_lib_rules,$(m)) $(call kvx_generic_rules,$(m),,kvx_clibs,$(LIB_OUTPUT_DIR)/cluster)))
+
+$(foreach m,$(cluster_useobjs), $(eval $(call kvx_useobjs_rules,$(m))))
+
+module_included_end := 1
+# Include again plugin makefile at the end of main makefile
+$(eval $(call include_modules))
+
+################################################################################
+#			      General Rules
+################################################################################
+__ALL_BIN_TYPES := cluster host
+# All generated cobjs
+all_objslist = $(module_obj_hooks) $(host_objslist) $(kvx_objslist)
+all_depfiles = $(foreach o,$(all_objslist),$(dir $o).$(notdir $o).d $(dir $o).$(notdir $o).cmd)
+
+# Include the dependencies
+-include $(all_depfiles)
+
+# directory creation
+%/.dirstamp:
+	$(Q)mkdir -p $(@D)
+	$(Q)touch $@
+
+PHONY += __kvx_check_basic
+# Check the basic flags
+__kvx_check_basic: FORCE
+	$(foreach _a,$(__ALL_BIN_TYPES),$(if $(filter $(_a),$($(_a)-bin)), \
+		$(call error_msg,'$(_a) is a reserved identifier$(comma) please use another name for your binary'),) \
+	)
+
+# Hooks
+
+PHONY += __kvx_custom_post_build_hooks
+__kvx_custom_post_build_hooks: $(post-build-hooks) FORCE
+
+PHONY += __kvx_post_build
+__kvx_post_build: __kvx_targets FORCE
+	$(Q)$(MAKE) -f $(firstword $(MAKEFILE_LIST)) --no-print-directory __kvx_custom_post_build_hooks
+
+PHONY += __kvx_custom_pre_build_hooks
+__kvx_custom_pre_build_hooks: $(pre-build-hooks) FORCE
+
+PHONY += __kvx_pre_build
+# If there is a clean rule in MAKECMDGOALS, add it to the main dependencies
+# in order to work with parallel build
+__kvx_pre_build: __kvx_check_basic $(filter clean distclean,$(MAKECMDGOALS)) FORCE
+	$(Q)$(MAKE) -f $(firstword $(MAKEFILE_LIST)) --no-print-directory __kvx_custom_pre_build_hooks
+
+PHONY += __kvx_all
+__kvx_all:  __kvx_post_build FORCE
+
+PHONY += __kvx_targets
+__kvx_targets: __kvx_pre_build
+	$(Q)$(MAKE) -f $(firstword $(MAKEFILE_LIST)) --no-print-directory __kvx_main_targets
+
+PHONY += __kvx_main_targets
+__kvx_main_targets: $(module_main_hooks) $(__host_all_binaries)  $(__all_dtbs) $(__kvx_all_binaries) FORCE
+
+quiet_cmd_clean	= CLEAN
+      cmd_clean	= rm -rf $(BIN_DIR) $(LIB_OUTPUT_DIR) $(BUILD_DIR) $(DOC_DIR) $(GEN_DIR) $(module_clean_files) $(clean-extra-files)
+
+PHONY += clean
+clean: $(clean-hooks) FORCE
+	$(call build_cmd,clean)
+
+PHONY += distclean
+distclean: clean
+
+PHONY += __kvx_makefile-help
+__kvx_makefile-help: FORCE
+	@echo  ''
+	@echo  'Targets:'
+	@echo  '  all             - Generate all the objects'
+	@echo  '  clean           - Remove generated files'
+	@echo  '  help            - Display this help'
+	@echo  ''
+	@echo  'Options:'
+	@echo  '  O=dir           - Build the sources in <dir> (default: output)'
+	@echo  '  V=1             - Verbose output'
+	@echo  ''
+	@echo  'Modules:'
+	@$(foreach m,$(wildcard $(__module_str)/*.mk),echo '  - $(basename $(notdir $(m)))';)
+	@echo  ''
+	$(if $(help-hooks), \
+		@echo 'Custom help:' \
+	)
+
+
+PHONY += __kvx_custom_help_hooks
+__kvx_custom_help_hooks: $(help-hooks) FORCE
+
+PHONY += help
+help: __kvx_makefile-help
+	$(Q)$(MAKE) -f $(firstword $(MAKEFILE_LIST)) --no-print-directory __kvx_custom_help_hooks
+
+
+PHONY += FORCE
+FORCE:
+	@:
+
+.PHONY: $(PHONY)
+
+.PRECIOUS: %/.dirstamp

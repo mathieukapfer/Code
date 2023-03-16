@@ -20,4 +20,8 @@ run-mppa: openmp_bench_mppa
 run-host: openmp_bench_x86
 	output/bin/openmp_bench_x86
 
+ifdef KALRAY_TOOLCHAIN_DIR
 include $(KALRAY_TOOLCHAIN_DIR)/share/make/Makefile.kalray
+else
+include ../kvx-make/Makefile.kalray
+endif

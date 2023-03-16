@@ -1,0 +1,10 @@
+######################################
+# Copyright (C) 2008-2015 Kalray SA. #
+#                                    #
+# All rights reserved.               #
+######################################
+
+# Enable strict flags module
+use-module += strict-flags
+
+include $(KALRAY_TOOLCHAIN_DIR)/share/make/Makefile.kalray

@@ -1,0 +1,19 @@
+[[source]]
+url = "https://pypi.org/simple"
+verify_ssl = true
+name = "pypi"
+
+[packages]
+tensorflow = "*"
+numpy = "*"
+h5py = "*"
+mat4py = "*"
+scipy = "*"
+matplotlib = "*"
+mat73 = "*"
+
+[dev-packages]
+python-lsp-server = {extras = ["all"], version = "*"}
+
+[requires]
+python_version = "3.9"

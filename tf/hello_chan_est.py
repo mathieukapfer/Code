@@ -7,9 +7,10 @@ import matplotlib.pyplot as plt
 # script params
 # =================================================================
 training = False
-evaluate = True
+evaluate = False
 traindata_size = 256
 nb_input_depth = 2   # value '2' means one layer with real and complex value
+data_path="data/"
 weight_file = "chan_test_25600"
 
 # =================================================================
@@ -32,11 +33,11 @@ print(y.dtype)
 
 # read mat files
 if traindata_size <= 25600:
-    trainDataMat = scipy.io.loadmat(f"trainData_{traindata_size}.mat")
-    trainLabelsMat = scipy.io.loadmat(f"trainLabels_{traindata_size}.mat")
+    trainDataMat = scipy.io.loadmat(f"{data_path}trainData_{traindata_size}.mat")
+    trainLabelsMat = scipy.io.loadmat(f"{data_path}trainLabels_{traindata_size}.mat")
 else:
-    trainDataMat = mat73.loadmat(f"trainData_{traindata_size}.mat")
-    trainLabelsMat = mat73.loadmat("trainLabels_{traindata_size}.mat")
+    trainDataMat = mat73.loadmat(f"{data_path}trainData_{traindata_size}.mat")
+    trainLabelsMat = mat73.loadmat("{data_path}trainLabels_{traindata_size}.mat")
 
 # get batch lenght i.e. last column
 batchLen = len(trainDataMat['trainData'][1][1][1])
@@ -90,12 +91,12 @@ if training:
     else:
         # work with complex value
         # train
-        model.fit(x_train_t, y_train_t, validation_data=(x_test_t, y_test_t),  epochs=5 )
+        model.fit(x_train_t, y_train_t, validation_data=(x_test_t, y_test_t), epochs=5)
 
-    model.save(weight_file)
+    model.save(f'{data_path}{weight_file}')
 else:
     print("Load previous weight\n")
-    model.load_weights(weight_file)
+    model.load_weights(f'{data_path}{weight_file}')
 
 # evaluate
 if evaluate:
@@ -104,7 +105,7 @@ if evaluate:
         # test
         model.evaluate(x_test_r, y_test_r)
     else:
-        model.fit(x_train_t, y_train_t, validation_data=(x_test_t, y_test_t),  epochs=1 )
+        model.fit(x_train_t, y_train_t, validation_data=(x_test_t, y_test_t), epochs=1)
         # test
         model.evaluate(x_test_t, y_test_t)
 

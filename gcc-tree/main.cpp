@@ -1,16 +1,22 @@
 #include <stdio.h>
 
+#define SIZE_T 99
+
 int main(int argc, char *argv[])
 {
-  int titi[20];
-  int tab[10];
-  int toto[20];
 
-  for(int i=0; i<=20; i++) {
-    toto[i]=i;
+  int A[SIZE_T], B[SIZE_T], C[SIZE_T];
+
+  // loop
+  for (int i = 0; i < SIZE_T; i++) {
+    C[i]=A[i] + B[i];
   }
 
-  printf("%d %d %d",tab[10], titi[0], toto[0]);
+  // usage
+  for (int i = 0; i < SIZE_T; i++) {
+    printf("%d ", C[i]);
+  }
+
 
   return 0;
 }

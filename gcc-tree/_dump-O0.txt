@@ -1,0 +1,70 @@
+  /work1/mkapfer/Code/c-tips/sanitizer:
+  total used in directory 2.1M available 458879968
+  drwxr-xr-x 4 mkapfer software 4.0K Mar  8 12:03 ..
+  -rwxr-xr-x 1 mkapfer software  25K Mar 28 12:27 main
+  -rw-r--r-- 1 mkapfer software  215 Mar  8 12:03 main.cpp
+  -rw-r--r-- 1 mkapfer software 5.0K Mar 28 12:27 main.cpp.000i.cgraph
+  -rw-r--r-- 1 mkapfer software    0 Mar 28 12:27 main.cpp.000i.ipa-clones
+  -rw-r--r-- 1 mkapfer software    0 Mar 28 12:27 main.cpp.000i.type-inheritance
+  -rw-r--r-- 1 mkapfer software 919K Mar 28 12:27 main.cpp.001t.tu
+  -rw-r--r-- 1 mkapfer software  610 Mar 28 12:27 main.cpp.003t.original
+  -rw-r--r-- 1 mkapfer software 1020 Mar 28 12:27 main.cpp.004t.gimple
+  -rw-r--r-- 1 mkapfer software 1.4K Mar 28 12:27 main.cpp.006t.omplower ==> openmp
+  -rw-r--r-- 1 mkapfer software 1.3K Mar 28 12:27 main.cpp.007t.lower
+  -rw-r--r-- 1 mkapfer software 1.3K Mar 28 12:27 main.cpp.009t.ehopt
+  -rw-r--r-- 1 mkapfer software 1.3K Mar 28 12:27 main.cpp.010t.eh
+  -rw-r--r-- 1 mkapfer software 2.2K Mar 28 12:27 main.cpp.011t.cfg
+  -rw-r--r-- 1 mkapfer software 1.4K Mar 28 12:27 main.cpp.012t.ompexp ==> openmp
+  -rw-r--r-- 1 mkapfer software 1.4K Mar 28 12:27 main.cpp.013t.printf-return-value1
+  -rw-r--r-- 1 mkapfer software 1.8K Mar 28 12:27 main.cpp.015i.visibility
+  -rw-r--r-- 1 mkapfer software  703 Mar 28 12:27 main.cpp.018i.build_ssa_passes
+  -rw-r--r-- 1 mkapfer software 1.4K Mar 28 12:27 main.cpp.019t.fixup_cfg1
+  -rw-r--r-- 1 mkapfer software 2.7K Mar 28 12:27 main.cpp.020t.ssa
+  -rw-r--r-- 1 mkapfer software  783 Mar 28 12:27 main.cpp.026i.opt_local_passes
+  -rw-r--r-- 1 mkapfer software 1.5K Mar 28 12:27 main.cpp.027t.fixup_cfg3
+  -rw-r--r-- 1 mkapfer software 4.3K Mar 28 12:27 main.cpp.028t.inline_param1
+  -rw-r--r-- 1 mkapfer software 1.5K Mar 28 12:27 main.cpp.029t.einline  ==> early inline
+  -rw-r--r-- 1 mkapfer software    0 Mar 28 12:27 main.cpp.046t.profile_estimate
+  -rw-r--r-- 1 mkapfer software 1.6K Mar 28 12:27 main.cpp.049t.release_ssa
+  -rw-r--r-- 1 mkapfer software 4.3K Mar 28 12:27 main.cpp.050t.inline_param2
+  -rw-r--r-- 1 mkapfer software  783 Mar 28 12:27 main.cpp.062i.targetclone
+  -rw-r--r-- 1 mkapfer software 1.7K Mar 28 12:27 main.cpp.065i.free-inline-summary
+  -rw-r--r-- 1 mkapfer software 1.8K Mar 28 12:27 main.cpp.071i.whole-program
+  -rw-r--r-- 1 mkapfer software 1.7K Mar 28 12:27 main.cpp.078i.inline  ==> inline
+  -rw-r--r-- 1 mkapfer software  783 Mar 28 12:27 main.cpp.083i.materialize-all-clones
+  -rw-r--r-- 1 mkapfer software  783 Mar 28 12:27 main.cpp.085i.simdclone
+  -rw-r--r-- 1 mkapfer software 1.5K Mar 28 12:27 main.cpp.086t.fixup_cfg4
+  -rw-r--r-- 1 mkapfer software  885 Mar 28 12:27 main.cpp.087t.ehdisp
+  -rw-r--r-- 1 mkapfer software 1.5K Mar 28 12:27 main.cpp.218t.veclower
+  -rw-r--r-- 1 mkapfer software 1.5K Mar 28 12:27 main.cpp.219t.cplxlower0
+  -rw-r--r-- 1 mkapfer software 2.6K Mar 28 12:27 main.cpp.221t.asan0
+  -rw-r--r-- 1 mkapfer software 5.0K Mar 28 12:27 main.cpp.223t.sanopt
+  -rw-r--r-- 1 mkapfer software 3.1K Mar 28 12:27 main.cpp.224t.ehcleanup2
+  -rw-r--r-- 1 mkapfer software 2.8K Mar 28 12:27 main.cpp.225t.resx
+  -rw-r--r-- 1 mkapfer software 3.5K Mar 28 12:27 main.cpp.227t.optimized  ==> pseudo C optim
+  -rw-r--r-- 1 mkapfer software  54K Mar 28 12:27 main.cpp.229r.expand  ==> first builtin expand
+  -rw-r--r-- 1 mkapfer software  28K Mar 28 12:27 main.cpp.230r.vregs
+  -rw-r--r-- 1 mkapfer software  27K Mar 28 12:27 main.cpp.231r.into_cfglayout
+  -rw-r--r-- 1 mkapfer software  54K Mar 28 12:27 main.cpp.232r.jump
+  -rw-r--r-- 1 mkapfer software  27K Mar 28 12:27 main.cpp.244r.reginfo
+  -rw-r--r-- 1 mkapfer software  28K Mar 28 12:27 main.cpp.264r.outof_cfglayout
+  -rw-r--r-- 1 mkapfer software  28K Mar 28 12:27 main.cpp.265r.split1  ==> 2nd  builtin expand
+  -rw-r--r-- 1 mkapfer software  34K Mar 28 12:27 main.cpp.267r.dfinit
+  -rw-r--r-- 1 mkapfer software  34K Mar 28 12:27 main.cpp.268r.mode_sw
+  -rw-r--r-- 1 mkapfer software  34K Mar 28 12:27 main.cpp.269r.asmcons
+  -rw-r--r-- 1 mkapfer software  65K Mar 28 12:27 main.cpp.273r.ira  ==> registre allocation
+  -rw-r--r-- 1 mkapfer software  86K Mar 28 12:27 main.cpp.274r.reload ==> registre allocation - spill
+  -rw-r--r-- 1 mkapfer software  37K Mar 28 12:27 main.cpp.278r.split2 ==> 3nd  builtin expand
+  -rw-r--r-- 1 mkapfer software  40K Mar 28 12:27 main.cpp.282r.pro_and_epilogue
+  -rw-r--r-- 1 mkapfer software  38K Mar 28 12:27 main.cpp.285r.jump2
+  -rw-r--r-- 1 mkapfer software  38K Mar 28 12:27 main.cpp.298r.stack
+  -rw-r--r-- 1 mkapfer software  38K Mar 28 12:27 main.cpp.299r.alignments
+  -rw-r--r-- 1 mkapfer software  38K Mar 28 12:27 main.cpp.301r.mach
+  -rw-r--r-- 1 mkapfer software  38K Mar 28 12:27 main.cpp.302r.barriers
+  -rw-r--r-- 1 mkapfer software  38K Mar 28 12:27 main.cpp.306r.shorten
+  -rw-r--r-- 1 mkapfer software  38K Mar 28 12:27 main.cpp.307r.nothrow
+  -rw-r--r-- 1 mkapfer software  42K Mar 28 12:27 main.cpp.308r.dwarf2
+  -rw-r--r-- 1 mkapfer software  38K Mar 28 12:27 main.cpp.309r.final
+  -rw-r--r-- 1 mkapfer software  33K Mar 28 12:27 main.cpp.310r.dfinish
+  -rw-r--r-- 1 mkapfer software  121 Mar 28 12:27 main.cpp.311t.statistics
+  -rw-r--r-- 1 mkapfer software  101 Mar 28 12:26 makefile

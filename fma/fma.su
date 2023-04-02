@@ -1,0 +1,3 @@
+fma.cpp:8:6:void loop(int, const float*, const float*, float*)	16	static
+fma.cpp:22:6:void loopv(int, float*, float*, float*)	456	dynamic,bounded
+fma.cpp:36:5:int main(int, char**)	448	static

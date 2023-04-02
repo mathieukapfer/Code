@@ -41,8 +41,8 @@ cluster-bin += hello_mppa hello_mppa2
 
 # host target
 # ==============
-hello-srcs := hello_mppa.c
-hello-cflags := $(common-cflags) -march=native #-mavx512bw -mavx512vl  #-march=cannonlake  #
+hello-srcs := hello_mppa_.c
+hello-cflags := -g -save-temps -fverbose-asm  -march=native #-mavx512bw -mavx512vl  #-march=cannonlake  #
 
 host-bin += hello
 

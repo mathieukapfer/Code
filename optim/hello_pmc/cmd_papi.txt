@@ -1,0 +1,11 @@
+
+  239  sudo apt install papi-tools
+
+  664  papi_mem_info
+  670  papi_version
+  685  papi_avail
+  687  papi_component_avail
+  688  papi_clockres
+
+  676  papi_event_chooser PRESET PAPI_L1_DCM
+  681  papi_event_chooser NATIVE PAPI_L1_ICM | more

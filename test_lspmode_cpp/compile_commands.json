@@ -1,0 +1,26 @@
+[
+    {
+        "arguments": [
+            "g++",
+            "-c",
+            "-Isubdir",
+            "-o",
+            "toto",
+            "titi.cpp"
+        ],
+        "directory": "/home/kapfer/Code/C",
+        "file": "titi.cpp"
+    },
+    {
+        "arguments": [
+            "g++",
+            "-c",
+            "-Isubdir",
+            "-o",
+            "toto",
+            "toto.cpp"
+        ],
+        "directory": "/home/kapfer/Code/C",
+        "file": "toto.cpp"
+    }
+]

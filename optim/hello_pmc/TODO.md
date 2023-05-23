@@ -11,6 +11,8 @@
  - disable frequency scaling
 
 ## basic optim
+ - pre-allocation - no dynamic allocation in data plan
+
  - compiler option
    - -O2, -O3 (loop unrolling) & ASM dump
    - #pragma GCC unroll(8)
@@ -20,3 +22,5 @@
  - manual unrolling (& prologue / epilogue)
    - reduce loop overhead
    - processing & load (to register) interleaving
+
+ - parallelisation (open-mp, pthread)
